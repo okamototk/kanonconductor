@@ -1,0 +1,25 @@
+= SampleProject =
+
+このドキュメントは、Wiki文書のサンプルです。TracLightningは、拡張子が*.wikiの
+ファイルをTrac Wikiとしてリポジトリブラウザで表示します。
+この文書をブラウザ上で表示するには、TracLightningをインストールしたマシンの上で
+下記のURLを入力してブラウザを開いてください。
+
+http://localhost/trac/SampleProject/browser/LibraryProject/trunk/README.wiki
+
+Wiki文書として、このテキストファイルが見えるはずです。例えば、POMファイルへのリンクは、
+
+ * source:LibraryProject/trunk/pom.xml
+
+で参照できます。
+
+{{{ 
+[[Image(source:LibraryProject/trunk/logo.png)]]
+}}}
+
+と書けば、Wiki内に画像を埋め込むこともできます。
+
+
+= 何の役に立つのか? =
+この機能は、Wiki形式で設計書などを保存するときに役立ちます。リポジトリ上で管理すれば、ソースコードと一緒に管理したり、タグを打ったりすることができます。
+

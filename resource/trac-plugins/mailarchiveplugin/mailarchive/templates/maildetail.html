@@ -1,0 +1,121 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="layout.html" />
+  <xi:include href="macros.html" />
+  <head>
+    <title>MailArchive - [$mail.id] ${mail.get_subject()}</title>
+    <link href="${req.href.chrome('common/css/report.css')}" type="text/css" rel="stylesheet" />
+    <link href="${req.href.chrome('mailarchive/css/mailarchive.css')}" type="text/css" rel="stylesheet" />
+    <script type="text/javascript">
+      jQuery(document).ready(function($) {
+        $("#content").find("h1,h2,h3,h4,h5,h6").addAnchor("${_('Link to this section')}");
+      });
+    </script>
+    <script type="text/javascript" src="${req.chrome.htdocs_location}js/folding.js"></script>
+    <script type="text/javascript">
+      jQuery(document).ready(function($) {
+        $("fieldset legend.foldable").enableFolding(false);
+      });
+    </script>   
+  </head>
+
+  <body>
+    <div id="content" class="mailarchive">
+
+      <form id="prefs" method="get" action="">
+        <div>Wiki/Text切替</div>
+          <ul>
+            <li><label> <input type="radio" name="wikimode" value="on" checked="${req.args.get('wikimode') == 'on' or None}" /> wiki表示</label>
+            </li>
+            <li><label> <input type="radio" name="wikimode" value="off" checked="${req.args.get('wikimode') != 'on' or None}" /> text表示</label>
+            </li>
+          </ul>
+        <div class="buttons">
+          <input type="submit" name="update" value="更新"/>
+        </div>
+      </form>
+
+      <h2>[$mail.id] ${mail.get_subject()}</h2>
+      <ul>
+        <li>From:<a class="mail-link" href="mailto:$mail.fromaddr"><span class="icon"/>${mail.get_fromtext()}</a></li>
+        <li>Date:${mail.get_senddate()}</li>
+      </ul>
+      
+      <fieldset>
+        <legend class="foldable">関連チケット</legend>
+        <form id="new_ticket" method="post" action="${req.href('newticket')}">
+          <div py:with="related_tickets=mail.get_related_tickets(req);">
+            <ul py:if="len(related_tickets) > 0">
+              <py:for each="ticket in related_tickets">
+                <li><a href="${req.href.ticket(ticket.id)}">#${ticket.id} ${ticket.summary}</a><br/></li>
+              </py:for>
+            </ul>
+          </div>
+          <div class="buttons">
+            <input type="hidden" name="preview" value="preview"/>
+            <input type="hidden" name="field_summary" value="${mail.get_subject()}"/>
+            <input type="hidden" name="field_reporter" value="$mail.fromaddr"/>
+            <input type="hidden" name="field_mail_id" value="$mail.id"/>
+            <textarea style="display:none;" name="field_description">{{{
+${mail.get_plain_body()}
+}}}</textarea>
+            <input type="submit" name="new_ticket_from_mail" value="このメールの内容をチケットに登録"/>
+          </div>
+        </form>
+      </fieldset>
+    
+      <py:def function="show_thread(main_mail, mail, cached_mails)">
+        <li class="thread_li">
+          <py:choose>
+            <a py:when="str(main_mail.id) != str(mail.id) and mail.has_attachments(req)" class="thread_subject_clip"
+              href="${req.href.mailarchive(mail.id)}">[$mail.id] ${mail.get_subject()}</a>
+            <a py:when="str(main_mail.id) != str(mail.id) and not mail.has_attachments(req)"
+              href="${req.href.mailarchive(mail.id)}">[$mail.id] ${mail.get_subject()}</a>
+            <strong py:when="mail.has_attachments(req)"
+              class="thread_subject_clip">[$mail.id] ${mail.get_subject()}</strong>
+            <strong py:otherwise="">[$mail.id] ${mail.get_subject()}</strong>
+            <py:with vars="related_tickets=mail.get_related_tickets(req);">
+              <span py:if="len(related_tickets) > 0" class="related_tickets">
+                --- (関連チケット: 
+                <py:for each="ticket in related_tickets">
+                  <a href="${req.href.ticket(ticket.id)}">#${ticket.id}</a>&nbsp;
+                </py:for>
+                )
+              </span>
+            </py:with>
+          </py:choose>
+          <br />
+          <span class="thread_from">${mail.get_fromtext()}</span>
+          <span class="thread_senddate">${mail.get_senddate()}</span>
+      
+          <py:for each="child in mail.get_children(cached_mails=cached_mails)">
+            <ul class="thread_ul">
+              ${show_thread(main_mail, child, cached_mails)}
+            </ul>
+          </py:for>
+        </li>
+      </py:def>
+    
+      <fieldset>
+        <legend class="foldable">関連するメール</legend>
+        <div id="mail_thread" class="options">
+          <ul class="thread_ul" py:with="root_mail=mail.get_thread_root();cached_mails = root_mail.get_thread_mails()">
+            ${show_thread(mail, root_mail, cached_mails)}
+          </ul>
+        </div>
+      </fieldset>
+    
+      <div class="mailarcpage searchable">${mail.get_html_body(req)}</div>
+    
+      ${list_of_attachments(attachment.get_attachments(req), True)}
+    
+    </div>
+
+  </body>
+</html>
+
+

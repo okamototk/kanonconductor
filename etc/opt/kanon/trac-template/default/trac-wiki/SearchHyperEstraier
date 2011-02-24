@@ -1,0 +1,74 @@
+= リポジトリの全文検索 with !HyperEstraier プラグイン Ver 0.1 =
+ここでは、Hirobeさん作、リポジトリ検索プラグインの!SearchHyperEstraierについて記述してます。[[BR]]以下、[http://weekbuild.sakura.ne.jp/trac/wiki/TracDoc/SearchHyperEstraierPlugin TracDoc/SearchHyperEstraierPlugin – HirobeのHack倉庫 – Trac]を[[BR]]TracLightningで使うことに限定して再構成しております。
+
+== 1. 概要 ==
+CGI版でもmod_python版でも動きます。
+
+仕組み：バッチでリポジトリをエクスポートし、HyperEstraierのインデックスを生成します。[[BR]]Trac内でコマンド版cmdestを実行し、その結果を表示します。
+
+'''制限'''
+
+ * リポジトリ内の最新のファイルしか検索できません。
+ * apacheからcmdest.exeを起動できるように権限設定が必要かもしれません。
+
+== 2. セットアップ ==
+=== 2.1.インデックスの設定をする ===
+リポジトリのエクスポートとインデックス生成を行うバッチを作成します。 [[BR]]makeindex.batを適切に書き換えてください。冒頭部の環境変数を書き換えてください。[[BR]]このバッチでやっているのは、(1)リポジトリのエクス ポート(2)インデックス生成です。[[BR]]なお、リポジトリのエクスポートの認証は考慮してません。認証が必要であればsvn exportに適切な引数を設定してください。
+
+makeindex.batの例(!MyProjectのtrunkを検索対象に)
+
+{{{
+set EXPORT_FOLDER=C:\TracLight\RepositorySearch\MyProject\rep
+set INDEX_FOLDER=C:\TracLight\RepositorySearch\MyProject\casket
+set REPOS_URI=file:///C:/TracLight/projects/svn/MyProject/trunk
+
+rmdir /S /Q %EXPORT_FOLDER%
+rmdir /S /Q %INDEX_FOLDER%
+svn export %REPOS_URI% %EXPORT_FOLDER%
+estcmd gather -cl -fx .pdf,.rtf,.doc,.xls,.ppt T@estxfilt -ic CP932  -pc CP932  -sd %INDEX_FOLDER% %EXPORT_FOLDER%
+}}}
+||EXPORT_FOLDER||リポジトリのエクスポート先となるフォルダ。空のフォルダを指定。||
+||REPOS_URI||エクスポート元となるリポジトリのURI||
+||INDEX_FOLDER||インデックスの生成先フォルダ。空のフォルダを指定。||
+
+通常は上記のようにtrunkなどリポジトリの一部を指定します。[[BR]](全体にしてしまうとtagsやbranchesの中身もチェックアウトしてしまいます。)[[BR]]また、makeindex.batはどこにおいてもかまいません。[[BR]]
+また上記ではおそらく「.pdf,.rtf,.doc,.xls,.ppt」の拡張子のファイルしか検索しません。[[BR]]
+.txtや.cなどテキストファイルであればestxfilt.batで呼ばれるxdoc2txtがスルーで出してくれるので[[BR]]
+{{{
+estcmd gather -cl -fx .pdf,.rtf,.doc,.xls,.ppt,.txt,.c T@estxfilt -ic CP932  -pc CP932  -sd %INDEX_FOLDER% %EXPORT_FOLDER%
+}}}
+のように-fxの後に続く拡張子の列挙の後に続けて記述すると検索されます。
+
+=== 2.2 trac.iniを設定する ===
+テキストファイルでtrac.ini(リポジトリのフォルダのconf配下)を開いて searchhyperestraierというブロックを追加してください。
+
+||index_path||インデックス生成パス(makeindex.batのINDEX_FOLDER)||
+||replace_left||検索結果のパスの頭で削るべき文字列。||
+||browse_trac||Tracのブラウザへのリンクを作るか否か。enabled=Tracのブラウザへのリンクを作る。デフォルトは'enabled'。||
+||url_left||URLを生成する際に頭につける文字列。browse_trac=enabledの場合は/がリポジトリのルートになるようにすること。||
+||estcmd_path||環境変数PATHが設定済みなら設定不要。estcmd.exeの絶対パス。デフォルトは'estcmd'||
+||estcmd_arg||Windowsでは設定不要。estcmd.exeの引数。デフォルトは'search -vx -sf -ic Shift_JIS'||
+||estcmd_encode||Windowsでは設定不要。コマンド実行時のエンコード(Pythonでの形式)。デフォルトは'mbcs'||
+
+例：
+
+{{{
+[searchhyperestraier]
+index_path = C:\TracLight\RepositorySearch\MyProject\casket
+replace_left = C:\TracLight\RepositorySearch\MyProject\rep
+url_left = /trunk
+}}}
+browser_tracがenabledになる場合は、登録されるURLはTracのリポジトリブラウザでRoot直下が/となるように replace_left,url_leftを調整する必要があります。[[BR]]たとえば、リポジトリブラウザでRoot/trunk/test3/検索のテスト.docと表示されるファイルは、/trunk/test3/検索のテスト.docとなるように調整してください。[[BR]]難しければ、何も設定せずに、検索結果として表示されたURLを見ながら調整してください。[[BR]]通常、EXPORT_FOLDER=replace_left、INDEX_FOLDER=index_pathになります。[[BR]]また、上記ではREPOS_URIの中身が「…/!MyProject/trunk」となっているので、[[BR]]プロジェクトを示す「!MyProject」より後ろの「/trunk」をurl_leftに入れます。
+
+== 2.3 apacheを再起動する ==
+trac.iniを設定したら、apacheを再起動してください。[[BR]](「サービスのアンインストール」を実行、再度「サービスのインストール」を実行。)
+
+== 3. 検索してみる ==
+検索タブをクリックして、「リポジトリ」チェックボックスが表示されることを確認してください。[[BR]]適当なキーワードで検索して、結果(source:xx )が表示されることを確認してください。[[BR]]リンクをクリックして、画面がリポジトリブラウザに切り替わり、正しくそのファイルを表示していることを確認してください。
+
+== 4. makeindex.batをタスク設定する ==
+動作確認ができたらmakeindex.batが１日１回実行できるようにWindowsのタスクを設定してください。[[BR]] 2000またはXPでは、タスクの追加は、以下のように行います。[[BR]] ［スタート］メニューから［プログラム］－［アクセサリ］－［システムツール］－［タスク］[[BR]] または[[BR]] ［コントロール パネル］の［タスク］[[BR]] を開き、［スケジュールされたタスクの追加］をクリックします。[[BR]] するとタスクウィザードが起動します。[[BR]] 「実行するプログラムを１つ選択してください。」のところで、[[BR]] 参照ボタンを押し、makeindex.batを指定してください。[[BR]] 「このタスクの実行」で「日単位」を選択してください。[[BR]] その後、開始日時などを設定します。[[BR]] 最後にユーザー名とパスワードの入力を行って終了です。[[BR]] 完了ボタンを押すと登録されます。
+
+== 5. 設定時刻を待たずにすぐ更新する ==
+もし、設定時刻を待たずにすぐ更新したい場合は、[[BR]] makeindex.batを直接実行してください。
+

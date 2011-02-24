@@ -1,0 +1,249 @@
+#!/bin/bash
+#  Kanon プロジェクト作成ツール
+#  (C)2011 Takashi Okamoto
+
+KANON_HOME=/opt/kanon
+KANON_CONFIG=/etc/opt/kanon
+KANON_VAR=/var/opt/kanon
+
+PROJECT_NAME=$1
+REPO_TYPE=$2
+TEMPLATE=$3
+
+export PYTHONPATH=$KANON_HOME/lib/python2.6:$KANON_HOME/lib/python2.6/site-packages
+export PATH=$KANON_HOME/bin:$PATH
+
+which apache2 >& /dev/null
+if [ $? = 0 ]
+then
+    APACHE_USER=www-data
+else
+    which httpd >& /dev/null
+    if [ $? = 0 ]
+    then	
+        APACHE_USER=apache
+    else
+        echo "Apacheが見つかりません。Apacheをインストールしてください。"
+        exit
+    fi
+fi
+    
+echo -n "
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+  Kanon プロジェクト作成ツール
+  (C)2011 Kanon Project
+
+☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+
+このツールはKanonのプロジェクトを作成するツールです。
+ガイドに従って、情報を入力するとプロジェクトを作成することができます。
+
+---------------------------------------------------------------------
+
+"
+if [ "$PROJECT_NAME" == '' ]
+then
+    echo -n "
+プロジェクト名を入力してください。
+プロジェクト名には、空白を含めちゃだめだよ。
+
+プロジェクト名: "
+    read PROJECT_NAME
+fi
+
+if [ "$PROJECT_NAME" == '' ]
+then
+   echo "プロジェクト名を入力してください。"
+   exit
+fi
+ 
+if [ "$REPO_TYPE" == '' ]
+then
+    echo -n "
+リポジトリのタイプを入力してください。
+
+ * svn    : Subversion
+ * hg     : Mercurial
+ * bzr    : Bazaar
+ * (なし) : バージョン管理システムを使いません
+
+リポジトリタイプ: "
+    read REPO_TYPE
+fi
+
+if [ "$REPO_TYPE" = "hg" ]
+then
+   echo "リポジトリにMercurialが選択されました。"
+elif [ "$REPO_TYPE" = "svn" ]
+then
+   echo "リポジトリにSubversionが選択されました。"
+elif [ "$REPO_TYPE" = "bzr" ]
+then
+   echo "リポジトリにBazaarが選択されました。"
+elif [ "$REPO_TYPE" != '' ]
+then
+   echo "リポジトリタイプ"$REPO_TYPE"はサポートしてないわよ。正しいリポジトリタイプを入力してね。" 
+   exit
+fi
+
+
+echo -n "
+テンプレートを入力してください。現在利用できるテンプレートは下記の通りです。
+
+"
+ls -1 /etc/opt/kanon/trac-template/|grep -v 'common'|while read LINE
+do
+    echo ' *' $LINE
+    if [ -e /etc/opt/kanon/trac-template/$LINE/description.txt ]; then
+        sed -e 's/^/\t/' /etc/opt/kanon/trac-template/$LINE/description.txt
+    fi
+    echo 
+done
+
+echo -n "
+
+以下から選んでください。
+
+"
+ls -1 /etc/opt/kanon/trac-template/|grep -v 'common'
+
+if [ "$TEMPLATE" == '' ]
+then
+    echo -n "
+
+テンプレート: "
+    read TEMPLATE
+    echo $TEMPLATE
+fi
+
+if [ "$TEMPLATE" = '' ]
+then
+  TEMPLATE="default"
+fi
+  
+TEMPLATE_MATCH="false"
+for i in `ls -1 /etc/opt/kanon/trac-template/|grep -v 'common'`
+do
+  if [ $i = $TEMPLATE ]
+  then
+     TEMPLATE_MATCH="true"
+  fi
+done
+
+if [ $TEMPLATE_MATCH != "true" ]
+then
+  echo "テンプレート'"$TEMPLATE"'は見つからないわね。正しいテンプレート名を入力してね。"
+  exit
+fi
+
+echo "プロジェクト名:   " $PROJECT_NAME
+echo "リポジトリタイプ: " $REPO_TYPE
+echo "テンプレート:     " $TEMPLATE
+
+if [ "$3" = '' ]
+then
+    echo -n "
+上記のプロジェクトを本当に作成していいですか(y/n)"
+    read YN
+
+    if [ "$YN" != 'y' ]
+    then 
+       echo "やっぱり、プロジェクトを作るの辞めとくね。"
+       exit
+    fi
+fi
+
+# リポジトリ作成
+
+if [ "$REPO_TYPE" = 'hg' ]
+then
+   hg init $KANON_VAR/hg/$PROJECT_NAME
+   cat $KANON_CONFIG/vcs-template/hg/hgrc |sed 's/%{PROJECT_NAME}/'$PROJECT_NAME'/' > $KANON_VAR/hg/$PROJECT_NAME/.hg/hgrc
+   chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/hg/$PROJECT_NAME
+elif [ "$REPO_TYPE" = 'svn' ]
+then
+   svnadmin create $KANON_VAR/svn/$PROJECT_NAME
+   cp $KANON_CONFIG/vcs-template/svn/* $KANON_VAR/svn/$PROJECT_NAME/hooks 
+   chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/svn/$PROJECT_NAME
+elif [ "$REPO_TYPE" = 'bzr' ]
+then
+   bzr init-repo $KANON_VAR/bzr/$PROJECT_NAME
+   bzr init $KANON_VAR/bzr/$PROJECT_NAME/trunk
+   chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/bzr/$PROJECT_NAME
+elif [ "$REPO_TYPE" != '' ]
+then
+   echo "Unsupported repository type: " $REPO_TYPE
+   exit
+fi
+
+# trac作成
+TRAC_PROJECT_PATH=$KANON_VAR/trac/$PROJECT_NAME
+
+if [ "$REPO_TYPE" != '' ]
+then
+   trac-admin $TRAC_PROJECT_PATH initenv $PROJECT_NAME sqlite:db/trac.db $REPO_TYPE /var/opt/kanon/$REPO_TYPE/$PROJECT_NAME
+else
+   trac-admin $TRAC_PROJECT_PATH initenv $PROJECT_NAME sqlite:db/trac.db
+fi
+
+
+if [ -d "$KANON_CONFIG/trac-template/$TEMPLATE/trac-wiki" ]
+then
+    # setup wiki
+    trac-admin $TRAC_PROJECT_PATH wiki load $KANON_CONFIG/trac-template/$TEMPLATE/trac-wiki
+fi
+
+if [ -f "$KANON_CONFIG/trac-template/$TEMPLATE/trac-init.sql" ]
+then
+    # setup database
+    sqlite3   -init $KANON_CONFIG/trac-template/$TEMPLATE/trac-init.sql $KANON_VAR/trac/$PROJECT_NAME/db/trac.db .quit
+fi
+
+if [ -d "$KANON_CONFIG/trac-template/$TEMPLATE/trac-site" ]
+then
+    # setup site(css/style,etc...)
+    cp -fr $KANON_CONFIG/trac-template/$TEMPLATE/trac-site/* $KANON_VAR/trac/$PROJECT_NAME
+fi
+
+
+# 継承するテンプレートを指定
+echo "
+[inherit]
+file = "$KANON_CONFIG"/trac-template/"$TEMPLATE"/trac.ini
+"  >> $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
+
+# authz_fileとauthz_module_nameの空設定を削除
+grep -v 'authz_* = ' $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini > /tmp/$PROJECT_NAME_trac.ini
+mv /tmp/$PROJECT_NAME_trac.ini $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
+
+trac-admin $KANON_VAR/trac/$PROJECT_NAME upgrade
+trac-admin $KANON_VAR/trac/$PROJECT_NAME repository resync "*"
+
+
+# ユーザ/パーミッションの初期設定
+trac-admin $TRAC_PROJECT_PATH permission add anonymous DISCUSSION_VIEW
+trac-admin $TRAC_PROJECT_PATH permission add authenticated DISCUSSION_APPEND TICKET_EDIT_CC XML_RPC
+trac-admin $TRAC_PROJECT_PATH permission add admin TRAC_ADMIN
+trac-admin $TRAC_PROJECT_PATH permission add developer authenticated 
+trac-admin $TRAC_PROJECT_PATH permission add leader MILESTONE_CREATE MILESTONE_MODIFY TICKET_ADMIN
+trac-admin $TRAC_PROJECT_PATH permission add guest developer
+
+sqlite3 $TRAC_PROJECT_PATH/db/trac.db "INSERT INTO session_attribute values ('admin', '1','picture_href','/trac/"$PROJECT_NAME"/raw-attachment/wiki/UserManagerPluginPictures/admin-penguin.png');"
+sqlite3 $TRAC_PROJECT_PATH/db/trac.db "INSERT INTO session_attribute values ('guest', '1','picture_href','/trac/"$PROJECT_NAME"/raw-attachment/wiki/UserManagerPluginPictures/guest-hamster.png');"
+sqlite3 $TRAC_PROJECT_PATH/db/trac.db "INSERT INTO session_attribute values ('leader', '1','picture_href','/trac/"$PROJECT_NAME"/raw-attachment/wiki/UserManagerPluginPictures/leader-cat.png');"
+
+chown $APACHE_USER.$APACHE_USER -R $TRAC_PROJECT_PATH
+
+echo "
+プロジェクトのセットアップは終わりしました。
+下記のURLでアクセスしてください。
+(リポジトリタイプがbazaarの場合、リポジトリURLにtrunkを付けるとtrunkにアクセスできます)
+"
+
+echo "プロジェクト管理 : http://[サーバ名]/trac/"$PROJECT_NAME
+echo "リポジトリ       : http://[サーバ名]/"$REPO_TYPE"/"$PROJECT_NAME
+
+
+
+

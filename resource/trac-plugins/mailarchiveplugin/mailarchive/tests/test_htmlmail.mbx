@@ -1,0 +1,79 @@
+From nobody Thu Jul 23 01:12:38 2009
+Content-Type: multipart/mixed; boundary="===============1662073198=="
+MIME-Version: 1.0
+Subject: =?iso-2022-jp?b?c2FtcGxl?=
+From: xxx@xx.xx
+To: yyy@yy.yy
+Message-ID: <testtest@xx.xx>
+Date: Wed, 22 Jul 2009 16:12:38 -0000
+
+--===============1662073198==
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+
+test body
+--===============1662073198==
+MIME-Version: 1.0
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+
+<strong>aaaa</strong>
+--===============1662073198==
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+
+bbbbbbbbbb
+--===============1662073198==
+Content-Type: image/png; name="mail.png"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="mail.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABh0RVh0
+U29mdHdhcmUAUGFpbnQuTkVUIFYzLjMx9kJYggAAAGhJREFUKFOVkN0JwDAIhNPRnMhZ3MSV3MF3
+ywUsNZj+CJJw+h3qQUQx/gQAEYm3UFUYxwCAYOYwszZRg2kB0NxBqbXACt0NtgAKaMwxcswWgLju
+kVoB3H0utVsatQLgZCk+vdeV5udjnsl7K4fgXw0fAAAAAElFTkSuQmCC
+--===============1662073198==--
+
+From nobody Thu Jul 23 01:26:15 2009
+Content-Type: multipart/alternative; boundary="===============0861948640=="
+MIME-Version: 1.0
+Subject: =?iso-2022-jp?b?c2FtcGxl?=
+Message-ID: <testtest2@xx.xx>
+From: xxx@xx.xx
+To: yyy@yy.yy
+Date: Wed, 22 Jul 2009 16:26:15 -0000
+
+--===============0861948640==
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+
+test body
+--===============0861948640==
+MIME-Version: 1.0
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+
+<strong>aaaa</strong>
+--===============0861948640==
+MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+
+bbbbbbbbbb
+--===============0861948640==
+Content-Type: image/png; name="mail.png"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="mail.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAYAAACALL/6AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAABh0RVh0
+U29mdHdhcmUAUGFpbnQuTkVUIFYzLjMx9kJYggAAAGhJREFUKFOVkN0JwDAIhNPRnMhZ3MSV3MF3
+ywUsNZj+CJJw+h3qQUQx/gQAEYm3UFUYxwCAYOYwszZRg2kB0NxBqbXACt0NtgAKaMwxcswWgLju
+kVoB3H0utVsatQLgZCk+vdeV5udjnsl7K4fgXw0fAAAAAElFTkSuQmCC
+--===============0861948640==--

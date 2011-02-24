@@ -1,0 +1,564 @@
+From - Mon Jun 30 14:25:44 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad7eeeaa4ae794
+X-Mozilla-Status: 0001
+X-Mozilla-Status2: 10000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:25:36 -0700 (PDT)
+Message-ID: <f764224b0806292225k53ef4276i8b2213bc01939552@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:25:36 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: Attachment File Test
+MIME-Version: 1.0
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_9542_30336517.1214803536519"
+Delivered-To: mailarchivetest@example.com
+
+------=_Part_9542_30336517.1214803536519
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+This is Test Mail of Attachment File.
+
+------=_Part_9542_30336517.1214803536519
+Content-Type: image/png; name=smile.png
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_fi2mnba10
+Content-Disposition: attachment; filename=smile.png
+
+iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAMAAADz0U65AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAwBQTFRF
+Dg4OEhISFxcXGBgYPz8/ZWVl9/f3////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfiZpMwAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVU
+IFYzLjMx9kJYggAAACZJREFUGFdjYIcCBiQGIxs7EAFFWMAISYqVDaiMlQ0owsDEjCwFADoWAZRN
+GLWmAAAAAElFTkSuQmCC
+------=_Part_9542_30336517.1214803536519--
+
+From - Mon Jun 30 14:29:49 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad7f02c9d00bdf
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:26:59 -0700 (PDT)
+Message-ID: <f764224b0806292226w2cd1cd99ie7f84fa6ecb0257@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:26:59 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: Eng Text Mail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Delivered-To: mailarchivetest@example.com
+
+This is Test Mail Of English Text Only Mail.
+So It's simple.
+
+From - Mon Jun 30 14:29:49 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad7f0b4a17595c
+X-Mozilla-Status: 0011
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:27:34 -0700 (PDT)
+Message-ID: <f764224b0806292227g8f33870g4f2c6392e15160f@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:27:34 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: Re: Eng Text Mail
+In-Reply-To: <f764224b0806292226w2cd1cd99ie7f84fa6ecb0257@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+References: <f764224b0806292226w2cd1cd99ie7f84fa6ecb0257@mail.gmail.com>
+Delivered-To: mailarchivetest@example.com
+
+Reply Test
+
+2008/6/30 build week <mailarchivetest@example.com>:
+> This is Test Mail Of English Text Only Mail.
+> So It's simple.
+>
+
+From - Mon Jun 30 14:43:43 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad7f7c65211f30
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:35:17 -0700 (PDT)
+Message-ID: <f764224b0806292235i6fe96794q86a563b38499ae7a@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:35:17 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: Trac Link Test
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Delivered-To: mailarchivetest@example.com
+
+Umm. This is Trac Link Test Mail.
+Ticket Link:#1
+StartPage should be wiki link
+Mail:1 should be link to Mail 1
+<f764224b0806292227g8f33870g4f2c6392e15160f@mail.gmail.com> should be
+link to "Re: Eng Text Mail"
+> This should be bar
+
+ * '''bold''', '''!''' can be bold too''', and '''! '''
+ * ''italic''
+ * '''''bold italic'''''
+ * __underline__
+ * {{{monospace}}} or `monospace`
+ * ~~strike-through~~
+ * ^superscript^
+ * ,,subscript,,
+
+= Heading =
+== Subheading ==
+=== About ''this'' ===
+=== Explicit id === #using-explicit-id-in-heading
+
+ * Item 1
+   * Item 1.1
+      * Item 1.1.1
+      * Item 1.1.2
+      * Item 1.1.3
+   * Item 1.2
+ * Item 2
+
+ 1. Item 1
+   a. Item 1.a
+   a. Item 1.b
+      i. Item 1.b.i
+      i. Item 1.b.ii
+ 1. Item 2
+And numbered lists can also be given an explicit number:
+ 3. Item 3
+
+ llama::
+   some kind of mammal, with hair
+ ppython::
+   some kind of reptile, without hair
+   (can you spot the typo?)
+
+{{{
+  def HelloWorld():
+      print "Hello World"
+}}}
+
+>> Someone's original text
+> Someone else's reply text
+My reply text
+
+||Cell 1||Cell 2||Cell 3||
+||Cell 4||Cell 5||Cell 6||
+
+ TitleIndex, http://www.edgewall.com/, !NotAlink
+
+ * [http://www.edgewall.com/ Edgewall Software]
+ * [wiki:TitleIndex Title Index]
+ * [wiki:ISO9000]
+
+ * Tickets: #1 or ticket:1
+ * Reports: {1} or report:1
+ * Changesets: r1, [1] or changeset:1
+ * ...
+
+ !NoHyperLink
+ !#42 is not a link
+
+{{{
+#!html
+<h1 style="text-align: right; color: blue">HTML Test</h1>
+}}}
+
+----
+End
+
+From - Mon Jun 30 14:43:44 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad7f8c0055063c
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:36:21 -0700 (PDT)
+Message-ID: <f764224b0806292236u5c7dac02m90e83a00661aedf6@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:36:21 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: =?ISO-2022-JP?B?GyRCRnxLXDhsJE4lRiU5JUgbKEIoSklTKQ==?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Delivered-To: mailarchivetest@example.com
+
+これは、日本語のテストメールです。
+ついでにTracLinkも#1
+JISで送られるはず。
+
+From - Mon Jun 30 14:43:44 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad7ff5b2c1bc0b
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:43:33 -0700 (PDT)
+Message-ID: <f764224b0806292243l332a9db0vf8fe00dd1e23bb14@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:43:33 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: =?ISO-2022-JP?B?GyRCRnxLXDhsRTpJVSVVJSElJCVrGyhC?=
+MIME-Version: 1.0
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_9552_21127666.1214804613773"
+Delivered-To: mailarchivetest@example.com
+
+------=_Part_9552_21127666.1214804613773
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+添付ファイルのファイル名が日本語の場合のテスト
+これは、ThinderBirdで使われている形式（RFC 2231準拠）
+ホントはこの形式が正式といえるんだけど、日本では普及していない。
+以下の２つを添付しています。中身は同じ画像。
+・日本語のファイル名.png
+・コピー 〜 smile.png
+
+------=_Part_9552_21127666.1214804613773
+Content-Type: image/png;
+ name="=?ISO-2022-JP?B?GyRCRnxLXDhsJE4lVSUhJSQla0w+GyhCLnBuZw==?="
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_fi2n9tjr0
+Content-Disposition: attachment;
+ filename="=?ISO-2022-JP?B?GyRCRnxLXDhsJE4lVSUhJSQla0w+GyhCLnBuZw==?="
+
+iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAMAAADz0U65AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAwBQTFRF
+Dg4OEhISFxcXGBgYPz8/ZWVl9/f3////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfiZpMwAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVU
+IFYzLjMx9kJYggAAACZJREFUGFdjYIcCBiQGIxs7EAFFWMAISYqVDaiMlQ0owsDEjCwFADoWAZRN
+GLWmAAAAAElFTkSuQmCC
+------=_Part_9552_21127666.1214804613773
+Content-Type: image/png;
+ name="=?ISO-2022-JP?B?GyRCJTMlVCE8GyhCIBskQiFBGyhCIHNtaWxlLnBuZw==?="
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_fi2na0ks1
+Content-Disposition: attachment;
+ filename="=?ISO-2022-JP?B?GyRCJTMlVCE8GyhCIBskQiFBGyhCIHNtaWxlLnBuZw==?="
+
+iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAMAAADz0U65AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAwBQTFRF
+Dg4OEhISFxcXGBgYPz8/ZWVl9/f3////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfiZpMwAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVU
+IFYzLjMx9kJYggAAACZJREFUGFdjYIcCBiQGIxs7EAFFWMAISYqVDaiMlQ0owsDEjCwFADoWAZRN
+GLWmAAAAAElFTkSuQmCC
+------=_Part_9552_21127666.1214804613773--
+
+From - Mon Jun 30 14:49:38 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad8019c5bf2bbf
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:46:01 -0700 (PDT)
+Message-ID: <f764224b0806292246v1453c11dyf9aec990c95ed8b0@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:46:01 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: HTML Mail
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_9555_6230783.1214804761867"
+Delivered-To: mailarchivetest@example.com
+
+------=_Part_9555_6230783.1214804761867
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+This is Test of *HTML Format Mail.*
+
+   1. Numbering
+   2. Test
+
+------=_Part_9555_6230783.1214804761867
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<div>This is Test of <strong>HTML Format Mail.</strong></div>
+<ol>
+<li>Numbering</li>
+<li>Test</li></ol>
+<div>&nbsp;</div>
+
+------=_Part_9555_6230783.1214804761867--
+
+From - Mon Jun 30 14:49:38 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad802b2e85f06e
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:47:12 -0700 (PDT)
+Message-ID: <f764224b0806292247r52d4bda4r693adcf3079b9f3a@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:47:12 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: =?ISO-2022-JP?B?GyRCRnxLXDhsJHI0XiRgGyhCSFRNTBskQiVhITwlaxsoQg==?=
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_9558_6284188.1214804833002"
+Delivered-To: mailarchivetest@example.com
+
+------=_Part_9558_6284188.1214804833002
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+これは日本語を含む*HTMLメールの*テストです。
+
+------=_Part_9558_6284188.1214804833002
+Content-Type: text/html; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<div>これは日本語を含む<strong>HTMLメールの</strong>テストです。</div>
+<div>&nbsp;</div>
+
+------=_Part_9558_6284188.1214804833002--
+
+From - Mon Jun 30 14:49:39 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad8040a69c6c3a
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:48:41 -0700 (PDT)
+Message-ID: <f764224b0806292248n295946a4y7ab46f4e52ffdaf7@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:48:41 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: =?ISO-2022-JP?B?UmU6IBskQkZ8S1w4bCRyGyhC?= =?ISO-2022-JP?B?GyRCNF4kYBsoQkhUTUwbJEIlYSE8JWsbKEI=?=
+In-Reply-To: <f764224b0806292247r52d4bda4r693adcf3079b9f3a@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_9562_602982.1214804921152"
+References: <f764224b0806292247r52d4bda4r693adcf3079b9f3a@mail.gmail.com>
+Delivered-To: mailarchivetest@example.com
+
+------=_Part_9562_602982.1214804921152
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+*HTMLメールの返信*のテスト
+TracLinkは無理だろうなぁ。 #1 とか。
+
+2008/06/30 14:47 build week <mailarchivetest@example.com>:
+
+> これは日本語を含む*HTMLメールの*テストです。
+>
+>
+
+------=_Part_9562_602982.1214804921152
+Content-Type: text/html; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<div><strong>HTMLメールの返信</strong>のテスト</div>
+<div>TracLinkは無理だろうなぁ。 #1 とか。</div>
+<div>&nbsp;</div>
+<div class="gmail_quote">2008/06/30 14:47 build week &lt;<a href="mailto:mailarchivetest@example.com">mailarchivetest@example.com</a>&gt;:<br>
+<blockquote class="gmail_quote" style="PADDING-LEFT: 1ex; MARGIN: 0px 0px 0px 0.8ex; BORDER-LEFT: #ccc 1px solid">
+<div>これは日本語を含む<strong>HTMLメールの</strong>テストです。</div>
+<div>&nbsp;</div></blockquote></div><br>
+
+------=_Part_9562_602982.1214804921152--
+
+From - Mon Jun 30 14:49:39 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad804737aa62c0
+X-Mozilla-Status: 0000
+X-Mozilla-Status2: 00000000
+X-Mozilla-Keys:                                                                                 
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:49:07 -0700 (PDT)
+Message-ID: <f764224b0806292249t263b7bacpd95a9926f453f5e8@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:49:07 +0900
+From: "build week" <mailarchivetest@example.com>
+To: mailarchivetest@example.com
+Subject: =?ISO-2022-JP?B?UmU6IBskQkZ8S1w4bCRyGyhC?= =?ISO-2022-JP?B?GyRCNF4kYBsoQkhUTUwbJEIlYSE8JWsbKEI=?=
+In-Reply-To: <f764224b0806292248n295946a4y7ab46f4e52ffdaf7@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_9564_16787515.1214804947782"
+References: <f764224b0806292247r52d4bda4r693adcf3079b9f3a@mail.gmail.com>
+	 <f764224b0806292248n295946a4y7ab46f4e52ffdaf7@mail.gmail.com>
+Delivered-To: mailarchivetest@example.com
+
+------=_Part_9564_16787515.1214804947782
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_9565_18807082.1214804947786"
+
+------=_Part_9565_18807082.1214804947786
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+せっかくなので*ファイル*も添付してみるか。
+
+
+2008/06/30 14:48 build week <mailarchivetest@example.com>:
+
+> *HTMLメールの返信*のテスト
+> TracLinkは無理だろうなぁ。 #1 とか。
+>
+> 2008/06/30 14:47 build week <mailarchivetest@example.com>:
+>
+>> これは日本語を含む*HTMLメールの*テストです。
+>>
+>>
+>
+>
+
+------=_Part_9565_18807082.1214804947786
+Content-Type: text/html; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+<div>せっかくなので<em>ファイル</em>も添付してみるか。</div>
+<div><br>&nbsp;</div>
+<div class="gmail_quote">2008/06/30 14:48 build week &lt;<a href="mailto:mailarchivetest@example.com">mailarchivetest@example.com</a>&gt;:<br>
+<blockquote class="gmail_quote" style="PADDING-LEFT: 1ex; MARGIN: 0px 0px 0px 0.8ex; BORDER-LEFT: #ccc 1px solid">
+<div><strong>HTMLメールの返信</strong>のテスト</div>
+<div>TracLinkは無理だろうなぁ。 #1 とか。</div>
+<div>&nbsp;</div>
+<div class="gmail_quote">2008/06/30 14:47 build week &lt;<a href="mailto:mailarchivetest@example.com" target="_blank">mailarchivetest@example.com</a>&gt;:<br>
+<blockquote class="gmail_quote" style="PADDING-LEFT: 1ex; MARGIN: 0px 0px 0px 0.8ex; BORDER-LEFT: #ccc 1px solid">
+<div>これは日本語を含む<strong>HTMLメールの</strong>テストです。</div>
+<div>&nbsp;</div></blockquote></div><br></blockquote></div><br>
+
+------=_Part_9565_18807082.1214804947786--
+
+------=_Part_9564_16787515.1214804947782
+Content-Type: image/png;
+ name="=?ISO-2022-JP?B?GyRCRnxLXDhsJE4lVSUhJSQla0w+GyhCLnBuZw==?="
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_fi2nhxpz0
+Content-Disposition: attachment;
+ filename="=?ISO-2022-JP?B?GyRCRnxLXDhsJE4lVSUhJSQla0w+GyhCLnBuZw==?="
+
+iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAMAAADz0U65AAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAwBQTFRF
+Dg4OEhISFxcXGBgYPz8/ZWVl9/f3////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfiZpMwAAABh0RVh0U29mdHdhcmUAUGFpbnQuTkVU
+IFYzLjMx9kJYggAAACZJREFUGFdjYIcCBiQGIxs7EAFFWMAISYqVDaiMlQ0owsDEjCwFADoWAZRN
+GLWmAAAAAElFTkSuQmCC
+------=_Part_9564_16787515.1214804947782--
+
+
+From - Mon Jun 30 14:29:49 2008
+X-Account-Key: account4
+X-UIDL: GmailId11ad7f02c9d00001
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:26:59 -0700 (PDT)
+Message-ID: <f764224b0806292226w2cd1cd99ie7f84fa6ecb0234@mail.gmail.com>
+Date: Mon, 30 Jun 2008 14:26:59 +0900
+From: mail.arc@example.com
+To: mail.arc@example.com
+Subject: piliod in mail address 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Delivered-To: mailarchivetest@example.com
+
+This is Test Mail Of Piriod Mail Address.
+
+
+From - Sat Nov 03 19:06:14 2008
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:26:59 -0700 (PDT)
+Message-ID: <28056cd5-24e1-4d94-941b-d25a01d35d11testmail@example.com>
+Date: Sat, 01 Nov 2008 19:06:14 +0900
+From: 
+To: testmail@example.com
+Subject: Empty From Mail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Delivered-To: mailarchivetest@example.com
+
+Empty From Mail.
+
+From - Sat Nov 03 19:07:14 2008
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:26:59 -0700 (PDT)
+Message-ID: <28056cd5-24e1-4d94-941b-d25a01d35d22testmail@example.com>
+Date: Sat, 01 Nov 2008 19:07:14 +0900
+From: testmail@example.com
+To: testmail@example.com
+Subject: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Delivered-To: mailarchivetest@example.com
+
+Empty Subject Mail.
+
+

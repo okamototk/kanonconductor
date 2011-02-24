@@ -1,0 +1,33 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="admin.html"/>
+  <head>
+    <title>QueryChart</title>
+  </head>
+
+  <body>
+    <h2>QueryChart Management</h2>
+
+      <form  class="mod" id="reset" method="post">
+        <fieldset>
+          <legend>Reset Button:</legend>
+          <div class="buttons">
+          <label for="reset">
+          QueryChartのインストール直後および、カスタムフィールドの設定後は、このボタンを押してください。
+          TicketDeleteやBatchModifyによりTicketを変更した場合も、このボタンを押してください。
+          QueryChart用のカスタムフィールドに日付をセットしなおします。
+          <br />
+            <input type="submit" name="reset" value="Reset" />
+          </label>
+          </div>
+        </fieldset>
+      </form>
+    <span>$message</span>
+  </body>
+
+</html>
+

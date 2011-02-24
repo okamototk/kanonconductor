@@ -1,0 +1,172 @@
+#!/bin/bash
+
+export KANON_OPT=/opt/kanon
+export KANON_VAR=/var/opt/kanon
+
+if [ -f /etc/debian_version ]
+then
+    OS='debian'
+    APACHE_USER=www-data
+elif [ -f /etc/redhat-release ]
+then
+    OS='rhel'
+    APACHE_USER=apache
+else
+    echo "サポートされていないOSです。"
+    echo "現在サポートされいているOSは、"
+    echo ""
+    echo "  * Ubuntu 10.10 Server"
+    echo "  * Debian GNU/Linux, GNU/kFreeBSD 6.0"
+    echo "  * RedHat Enterprise Linux 6.0"
+    echo "  * Oracle Enterprise Linux 6.0"
+    echo ""
+    echo "です。"
+    exit
+fi
+
+if [ "$USER" != 'root' ]
+then
+    echo "rootでコマンドを実行してください。"
+fi
+
+
+if [ -d /opt/kanon ]
+then
+    echo "=========================================================================="
+    echo "注意！！ このマシンには既にKanonがインストールされているかも。確認してね♪"
+    echo "=========================================================================="
+fi
+echo ""
+echo "このコマンドはKanonをインストールするよ。"
+echo "既にkanonインストールされている場合は、上書きされて消えちゃうの。"
+echo -n "Kanonをインストールする?(y/n) "
+read YN
+
+if [ "$YN" != "y" ]
+then
+    echo "インストールを中断したよ。"
+    exit
+fi
+
+### install ubuntu package 
+if [ "$OS" = 'debian' ]
+then
+    apt-get update
+    apt-get -y install `cat pkglist.debian`
+elif [ "$OS" = 'rhel' ]
+then
+    yum -y install `cat pkglist.rhel`
+fi
+
+### install files
+cp -fr opt/* /opt
+cp -frn etc/* /etc
+
+
+### setup configuration
+export PYTHONPATH=/opt/kanon/lib/python2.6:/opt/kanon/lib/python2.6/site-packages
+cp resource/dot.pydistutils.cfg ~/.pydistutils.cfg
+
+## setup sitecustomize for python
+if [ -f /etc/python2.6/sitecustomize.py ]
+then
+    CHK=`grep "setdefaultencoding" /etc/python2.6/sitecustomize.py`
+    if [ "$CHK" = '' ]
+    then 
+        cat opt/kanon/lib/python2.6/site-packages/sitecustomize.py >> /etc/python2.6/sitecustomize.py
+    fi
+fi
+
+### install python components
+easy_install --prefix $KANON_OPT http://svn.edgewall.org/repos/genshi/tags/0.6.0/
+easy_install --prefix $KANON_OPT http://ftp.edgewall.com/pub/babel/Babel-0.9.5.zip
+easy_install --prefix $KANON_OPT http://www.i-act.co.jp/project/products/downloads/Trac-0.12.1.ja1.zip
+easy_install --prefix $KANON_OPT xlrd
+bzr co lp:trac-bzr /tmp/trac-bzr-install
+easy_install --prefix /opt/kanon /tmp/trac-bzr-install
+rm -fr /tmp/trac-bzr-install
+
+
+### install trac plugins
+easy_install --prefix $KANON_OPT http://svn.edgewall.com/repos/trac/plugins/0.12/mercurial-plugin 
+
+#resource/pluginsディレクトリのプラグインをインストール
+pushd .
+
+cd resource/trac-plugins
+for i in `ls -1 .`
+do
+    cd $i;python setup.py install --prefix=/opt/kanon
+    cd ..   
+done
+cd ../..
+
+# install plugins from web site
+rm -fr /tmp/kanon_build
+for i in `cat pluginlist`
+do
+    cd /tmp
+    svn co $i kanon_build
+    cd kanon_build
+    python setup.py install --prefix=/opt/kanon
+    cd ..
+    rm -fr kanon_build
+done
+popd
+
+
+### setup apache and restart
+if [ "$OS" = 'debian' ]
+then
+    if [ ! -f /etc/apache2/sites-available/kanon ]
+    then
+        cp resource/httpd.conf /etc/apache2/sites-available/kanon
+    fi
+    a2enmod expires
+    a2enmod auth_digest
+    a2ensite kanon
+    service apache2 stop
+    service apache2 start
+elif [ "$OS" = 'rhel' ]
+then
+    if [ ! -f /etc/httpd/conf.d/kanon.conf ]
+    then
+        cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
+    fi
+    echo 0 > /selinux/enforce
+    echo "SELinuxが無効化されました"
+    service httpd stop
+    service httpd start
+fi
+
+# データディレクトリが存在しない場合作成
+if [ ! -d "$KANON_VAR/trac" ]
+then
+    mkdir -p "$KANON_VAR/trac"
+fi
+
+if [ ! -d "$KANON_VAR/hg" ]
+then
+    mkdir -p "$KANON_VAR/hg"
+fi
+
+if [ ! -d "$KANON_VAR/bzr" ]
+then
+    mkdir -p "$KANON_VAR/bzr"
+fi
+
+if [ ! -d "$KANON_VAR/svn" ]
+then
+    mkdir -p "$KANON_VAR/svn"
+fi
+
+# setup SampleProject
+if [ ! -d "$KANON_VAR/trac/SampleProject" ]
+then
+    /opt/kanon/bin/kanon-create-project SampleProject svn default
+    svn import SampleProject file:///var/opt/kanon/svn/SampleProject/ -m "initial import."
+    chown $APACHE_USER.$APACHE_USER -R /var/opt/kanon/svn/SampleProject
+fi
+
+echo "Kanon Team Conductorのインストールが完了しました。"
+echo $KANON_OPT"/bin/kanon-create-project コマンドでプロジェクトを作成してください。"

@@ -1,0 +1,9 @@
+httpd
+python-setuptools
+sqlite
+mod_dav_svn
+mod_wsgi
+subversion
+mercurial
+bzr
+gcc

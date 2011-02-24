@@ -1,0 +1,104 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="layout.html" />
+  <xi:include href="macros.html" />
+
+      <head>
+	<title>作業時間入力</title>
+    <script type="text/javascript" src="${chrome.htdocs_location}js/wikitoolbar.js"></script>
+    <script type="text/javascript" py:choose="">
+      $(document).ready(function() {
+          $("div.description").find("h1,h2,h3,h4,h5,h6").addAnchor("Link to this section");
+        });
+    </script>
+      </head>
+
+      <body>
+<div id="content">
+<br />
+<br />
+<h1>作業時間入力</h1>
+作業時間とタスクの残り時間を入力します。最低でも1日一回入力を行ってください。<br />
+<form method="post" action="${req.href('worktime')}" autocomplete="off"  >
+<table border="0" cellspacing="0" cellpadding="0" class="listing tickets">
+<thead>
+  <tr>
+    <th>ID</th>
+    <th style="min-width: 20em;">概要</th>
+    <th style="min-width: 7em;">分類</th>
+    <th>担当者</th>
+    <th style="min-width: 6em;">優先度</th>
+    <th>マイルストーン</th>
+    <th>集計に<br />含める?</th>
+    <th>今日の<br />作業時間</th>
+    <th>残作業時間</th>
+    <th>作業時間計<br />　/見積時間</th>
+  </tr>
+</thead>
+<tbody>
+  <tr py:for="i in range(0,len(tickets))" 
+      class="color3-${i % 2 and 'odd' or 'even'}"
+      style="${'background: #aaa;' if tickets[i].billable=='false' else None}">
+    <th><a href="${req.href.ticket()}/${tickets[i].id}#field_totalhours">#${tickets[i].id}</a></th>
+    <th>${tickets[i].summary}</th>
+    <th>${tickets[i].type}</th>
+    <th>${tickets[i].owner}</th>
+    <th>${tickets[i].priority}</th>
+    <th>${tickets[i].milestone}</th>
+    <th><input type="checkbox" name="billable_${tickets[i].id}" checked="${tickets[i].billable=='true' or None}" onchange="
+if(this.checked){ 
+ $('#hours_${tickets[i].id}').removeAttr('readonly');
+} else {
+ $('#hours_${tickets[i].id}').attr('readonly','readonly');
+}
+"/></th>
+    <th  style="white-space:nowrap;">
+      <span py:if="not tickets[i].reported">
+ <input name="hours_${tickets[i].id}" id="hours_${tickets[i].id}" size="2" type="text"
+readonly="${tickets[i].billable=='false' or None}"
+onchange="
+remained_org = $('#remainedhours_${tickets[i].id}_old');
+if(this.value!=''){
+   remained = parseFloat(remained_org.text())-parseFloat(this.value); 
+} else {
+   remained = parseFloat(remained_org.text());
+} 
+if(remained &lt;= 0){
+  remained = 0;
+  $('#closedummy_${tickets[i].id}').attr('style','display:show;');
+} else {
+  $('#closedummy_${tickets[i].id}').attr('style','display:none;');
+  $('#close_${tickets[i].id}').attr('checked', false);
+}
+$('#remainedhours_${tickets[i].id}').val(remained);
+"/>
+<span name="closedummy_${tickets[i].id}" id="closedummy_${tickets[i].id}" style="display:none;"><br />closeする?<input type="checkbox" name="close_${tickets[i].id}" id="closed_${tickets[i].id}" /></span>
+</span>
+      <span py:if="tickets[i].reported">本日の作業は入力済み</span>
+    </th>
+    <th style="white-space:nowrap;">
+      <span id="remainedhours_${tickets[i].id}_old" name="remainedhours_${tickets[i].id}_old">${float(tickets[i].estimatedhours)-float(tickets[i].totalhours)}</span>h
+      ⇒
+      <span py:if="not tickets[i].reported">
+        <input name="remainedhours_${tickets[i].id}" id="remainedhours_${tickets[i].id}" 
+               readonly="${tickets[i].billable=='false' or None}"
+               value="${float(tickets[i].estimatedhours)-float(tickets[i].totalhours)}" type="text" size="2" />h
+      </span>
+      <span py:if="tickets[i].reported">${float(tickets[i].estimatedhours)-float(tickets[i].totalhours)}h(入力済)</span>
+    </th>
+    <th style="white-space:nowrap;">${tickets[i].totalhours}h/${tickets[i].estimatedhours}h</th>
+  </tr>
+</tbody>
+</table>
+<input type="submit" value="作業時間を反映" />
+</form>
+<ul>
+<li>作業を入力済みのチケットに作業時間を入力したい場合は、各チケットの作業時間の項目に作業時間を入力してください。</li>
+</ul>
+</div>
+</body>
+</html>

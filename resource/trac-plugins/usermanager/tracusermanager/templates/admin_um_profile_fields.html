@@ -1,0 +1,159 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/">
+  <xi:include href="admin.html" />
+  <head>
+    <title>ユーザ管理 :: プロファイル :: フィールド管理</title>
+  </head>
+
+  <body>
+
+    <h2>ユーザ管理 :: プロファイル :: ユーザプロファイルフィールドの管理</h2>
+
+    <!--! Detail view -->
+    <form py:if="cfadmin.display=='detail'" class="mod" id="addcf" method="POST">
+      <fieldset>
+        <legend>カスタムフィールドの変更:</legend>
+        <div class="field">
+          <label>名称 (変更できません): <strong>${cfadmin.customfield.name}</strong></label>
+        </div>
+        <input name="name" value="${cfadmin.customfield.name}" type="hidden" />
+        <input name="order" value="${cfadmin.customfield.order}" type="hidden" />
+        <div class="field">
+          <label>タイプ:<br />
+            <select name="type" id="type">
+              <option py:for="value in cfadmin.SUPPORTED_TYPES" selected="${cfadmin.customfield.type==value and 'selected' or None}" value="${value}">${value.capitalize()}</option>
+            </select>
+          </label>
+        </div>
+        <div class="field">
+          <label>ラベル:<br />
+            <input type="text" name="label" value="${cfadmin.customfield.label}" />
+          </label>
+        </div>
+        <div class="field">
+          <label>デフォルト値(動作しません!):<br />
+            <input type="text" name="value" value="${cfadmin.customfield.value}" />
+          </label>
+        </div>
+        <div class="field">
+          <fieldset class="iefix">
+            <label for="options">
+              セレクトもしくはチェックのオプション (セレクトの場合、最初の行を空にすると入力を省略可能にできます)
+            <p>
+              <textarea id="options" name="options" rows="5" cols="30">${cfadmin.customfield.options}</textarea>
+            </p>
+            </label>
+          </fieldset>
+        </div>
+        <div class="field">
+          <label for="cols">エントリーのテキストエリアのサイズ:<br />
+            列: <input type="text" name="cols" id="cols" size="5" value="${cfadmin.customfield.cols}" />
+            行: <input type="text" size="5" name="rows" id="rows" value="${cfadmin.customfield.rows}" /></label>
+        </div>
+        <div class="field">
+          <label>表示・非表示:<br />
+            <select name="internal" id="internal">
+              <option py:for="value,label in [('0',u'表示 - パブリックフィールド [デフォルト]' ) ,('1',u'隠しフィールド') ]" selected="${cfadmin.customfield.internal==value and 'selected' or None}" value="${value}">${label}</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="buttons">
+          <input type="submit" name="cancel" value="キャンセル" />
+          <input type="submit" name="save" value="保存" />
+        </div>
+      </fieldset>
+    </form>
+
+    <form py:if="cfadmin.display=='list'" class="addnew" id="addcf" method="POST">
+      <fieldset>
+        <legend>カスタムフィールドの追加:</legend>
+        <div class="field">
+          <label>名称:<br />
+            <input type="text" name="name" id="name" />
+          </label>
+        </div>
+        <div class="field">
+          <label>タイプ:<br />
+            <select name="type" id="type">
+              <option py:for="value in cfadmin.SUPPORTED_TYPES"
+                  value="${value}">${value.capitalize()}</option>
+            </select>
+          </label>
+        </div>
+        <div class="field">
+          <label>ラベル:<br />
+            <input type="text" name="label" id="label" />
+          </label>
+        </div>
+        <div class="field">
+          <label for="value">デフォルト値:<br />
+            <input type="text" name="value" id="value" />
+          </label>
+        </div>
+        <div class="field">
+          <fieldset class="iefix">
+            <label for="options">オプション:</label>
+            <p>
+              <textarea id="options" name="options" rows="4" cols="17"></textarea>
+            </p>
+          </fieldset>
+        </div>
+        <div class="field">
+          <label for="cols">テキストエリアのサイズ:<br />
+            列: <input type="text" name="cols" id="cols" size="2" />
+            行: <input type="text" size="2" name="rows" id="rows" />
+          </label>
+        </div>
+        <div class="buttons">
+          <input type="submit" name="add" value="Add" />
+        </div>
+      </fieldset>
+    </form>
+
+    <div py:if="cfadmin.display=='list'" py:strip="">
+      <p py:if="not len(cfadmin.customfields)" class="help">
+        No Custom Fields defined for this project.
+      </p>
+      <form py:if="len(cfadmin.customfields)" method="POST">
+        <table class="listing" id="cflist">
+          <thead>
+            <tr>
+              <th class="sel">&nbsp;</th>
+              <th>名称</th>
+              <th>タイプ</th>
+              <th>ラベル</th>
+              <th>順序</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr py:for="cf in cfadmin.customfields">
+              <td><input type="checkbox" name="sel" value="${cf.name}" /></td>
+              <td><a href="${cf.href}">${cf.name}</a> <b py:if="cf.internal=='1'" >[隠しフィールド]</b></td>
+              <td>${cf.type}</td>
+              <td>${cf.label}</td>
+              <td class="default">
+                <select name="order_${cf.name}">
+                  <option py:for="other in cfadmin.customfields"
+                      selected="${other.order==cf.order and 'selected' or None}">
+                      ${other.order}
+                  </option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="buttons">
+          <input type="submit" name="remove" value="選択した項目を削除" />
+          <input type="submit" name="apply" value="変更を反映" />
+        </div>
+      </form>
+    </div>
+
+  </body>
+
+</html>

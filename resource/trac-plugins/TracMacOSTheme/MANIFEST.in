@@ -1,0 +1,4 @@
+
+graft tracmacos/htdocs
+graft tracmacos/templates
+

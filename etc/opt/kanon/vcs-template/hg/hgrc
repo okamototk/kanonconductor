@@ -1,0 +1,4 @@
+[hooks]
+commit = /opt/kanon/bin/trac-commit-hook %{PROJECT_NAME} "(default)" $HG_NODE
+incoming = /opt/kanon/bin/trac-commit-hook %{PROJECT_NAME} "(default)" $HG_NODE
+

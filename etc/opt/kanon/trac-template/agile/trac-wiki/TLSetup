@@ -1,0 +1,210 @@
+[[PageOutline]]
+= Kanonセットアップガイド =
+ここでは、Kanonのセットアップ方法について解説します。なお、Kanonを初期インストールするとSampleProjectという名前でサンプルのプロジェクトが生成されます。まずは、こちらのプロジェクトで色々試してみることをお勧めします。デフォルトのユーザとしては、下記の3ユーザが設定されています(1.8.xから変更にされているのでご注意ください)。
+
+||ユーザ名||名前||パスワード||グループ||説明||
+||admin||管理太郎||admin||admin||管理者権限。Tracの管理を含めた全ての操作が可能||
+||leader||頭春蔵||leader||leader||リーダ権限。開発者権限に加え、マイルストーンの操作が可能||
+||guest||客人開発者||guest||developer||開発者権限。チケット、Wikiの操作が可能||
+
+== プロジェクトの作成 ==
+新しいプロジェクトで利用する場合、Kanonプロジェクトを作成しましょう。デフォルトからあるSampleProjectを変更しながら利用することもできますが、正直カッコ悪いです:p プロジェクトを作成するには、スタートメニューから「Trac」→「コマンドプロンプト」を選択して、コマンドプロンプトを起動します。次に'''create-project'''コマンドを実行しプロジェクトを作成します。プロジェクトの作成は、kanon-create-projectコマンドにより行います。
+
+{{{
+# /opt/kanon/bin/kanon-create-project
+}}}
+途中、利用するバージョン管理システム(svn,hg,bzr)、プロジェクトのテンプレート(default,agile)を聞いてきます。ウォータフォールモデルや従来の管理方法を利用する場合はdefault、スクラムを利用する場合は、agileを選択します。
+
+kanon-create-projectコマンドを実行すると下記の場所にTracプロジェクトとソースコードリポジトリが生成されます。
+
+||項目||URL||
+||Tracプロジェクト||!http://ホスト名/trac/プロジェクト名||
+||Subversion(以下SVNと記す)のリポジトリ||!http://ホスト名/svn/プロジェクト名||
+||Mercurial(以下hgと記す)のリポジトリ||!http://ホスト名/hg/プロジェクト名||
+||Bazaar(以下bzrと記す)のリポジトリ||!http://ホスト名/bzr/プロジェクト名/trunk||
+
+上記のリポジトリの実体は、/var/opt/kanonにあります。確認しておくと良いでしょう。
+
+
+== ユーザの追加 ==
+ユーザの追加は、各プロジェクト毎に「管理」メニューを利用して行います。管理者権限を持つsuzukiユーザでログインするとメニューバーに「管理」というメニューが表示されます。
+
+[/admin/accounts/users 「管理」メニューから、「Accounts」の「Users」]をクリックするとユーザ管理画面に遷移します。'''External Users欄の「Add External User」をクリック'''するとユーザ作成画面になります(注:'''必ずExternal Userを利用してください'''。「Add User」ボタンがありますが、'''「Add User」を利用するとパスワードが設定されません''')。ここで下記の項目を入力すると、ユーザが作成されます。
+
+||項目名||内容||入力例||
+||Username||ユーザアカウント名||okamototk||
+||Name||名前||岡本隆史||
+||Email||メールアドレス||!okamototk@example.com||
+||Role||役割||admin||
+||Password||パスワード||<パスワード>||
+||Confirm Password||パスワードの確認||Password欄に入れた値と同じ値||
+
+なお、ユーザのパスワードは右上の「ユーザ設定」メニューから「Account」タブを選択することにより変更することができます。'''デフォルトで用意されているユーザadmin,leader,guestについては、そのままにしておくと不正操作される可能性がありますので本格運用前にはパスワードは変更しておいた方がよい'''でしょう。
+
+== アクセス権の設定 ==
+各ユーザのアクセス権の設定は、「管理」画面の「一般」→「パーミッション」から行います。
+
+画面右のパーミッションの付与とグループに対象を追加の2つの方法でパーミッションを追加します。
+
+=== グループに対象を追加 ===
+グループを定義し、ユーザをそのグループに追加します。通常、こちらの方法でユーザを追加していきます。Kanonインストール時には、次の5つのグループが利用できます。
+
+||グループ名||説明||
+||anonymous||認証なしユーザが持つアクセス権。Wiki、チケットの閲覧のみ可能||
+||autenticated||Tracにログインした認証済みユーザが持つアクセス権。anonymousに加えWiki、チケットの編集が可能||
+||developer||開発者権限を持つ。デフォルトの設定ではautenticatedと同じ||
+||leader||リーダ権限を持つ。developer権限に加えマイルストーンの編集が可能||
+||admin||管理者権限を持つ。Tracの「管理」を含めた全ての操作が可能。||
+
+通常の開発者をdeveloperとし、Tracの管理者をadmin権限にすると良いでしょう。プロジェクトによっては、lリーダにリーダ権限を付与しマイルストーンの編集をできなくすると良いでしょう。
+
+非認証ユーザのアクセスを禁止したい場合は、anonymousグループをカスタマイズすることでアクセスを禁止することができますが、Apacheの設定を書き換え、非認証ユーザのアクセスを禁止するのが確実です。非認証ユーザのアクセスを禁止するには、Apacheの
+
+{{{
+<LocationMatch "/[^/]+/login">
+  AuthType Digest
+  AuthName trac
+  AuthUserFile /etc/opt/kanon/kanon_users.htdigest
+  Require valid-user
+</LocationMatch>
+}}}
+を次のように書き換えます。
+
+{{{
+<LocationMatch "/">
+  AuthType Digest
+  AuthName trac
+  AuthUserFile /etc/opt/kanon/kanon_users.htdigest
+  Require valid-user
+</LocationMatch>
+}}}
+=== グループ設定 ===
+グループを追加したり、グループのパーミッションを変更するには、「管理」メニューから、「一般設定」の「パーミッション」を選択します。右上の「パーミッション」の付与で対象欄にグループ名を入力し、アクションで付与したいアクセス権を設定します。
+
+ユーザをグループに追加するには、右下のグループに対象を追加で、対象にユーザアカウント名を、グループ名にユーザを追加するグループ名を入力します。
+
+追加したグループへのアクセス権の設定は、上記の設定と同じです。
+
+== Wikiのアクセス制限 ==
+Kanonには、Wiki中の特定のページに、許可された特定のユーザのみアクセス制限する機能を持っています。この機能により、例えば管理職しか見ることができない秘密情報などをWiki上で管理できるようになります。
+
+アクセス制限管理コンソールの「trac」の「privatewikis」でアクセス制限をかけるWikiを設定します。デフォルトでは、「SECURE]が設定されており、「Secure/XXX」という名前のWikiにアクセス制限が掛けられています。
+
+管理コンソールのパーミッションの画面からユーザもしくはグループにPRIVATE_VIEW_SECRET、PRIVATE_EDIT_SECRET権限を付与することにより、アクセス制限されたWikiを閲覧/編集可能になります。
+
+デフォルトの状態に対し、別のアクセス制御したいWikiを追加する場合には、管理コンソールの「priavatewikis」に「SECURE,FOO」のように、カンマで区切ってアクセス制限したいWikiを列挙します。この設定例では、Foo/XXXという名前を持つWikiに対してアクセス制限がかかります。また、このWikiへのアクセス権は、PRIVATE_VIEW_FOO、PRIVATE_EDIT_FOO権限により設定可能です。
+
+== ワークフローの設定 ==
+Kanon 2.0ではワークフローのカスタマイズを行うことができます。ここでは、ワークフローをカスタマイズして、リーダしかチケットをクローズできないようにしましょう。リーダにはTICKET_ADMIN権限を与えられていますので、trac.iniの下記の部分
+
+{{{
+resolve = new,assigned,accepted,reopened -> closed
+resolve.name = 解決にする
+resolve.operations = set_resolution
+resolve.permissions = TICKET_MODIFY
+}}}
+を次のように変更します。
+
+{{{
+resolve = new,assigned,accepted,reopened -> closed
+resolve.name = 解決にする
+resolve.operations = set_resolution
+resolve.permissions = TICKET_ADMIN
+}}}
+これで、leader権限を持つユーザしかチケットをクローズできなくなります(正確には、TICKET_ADMIN権限をもっているユーザ/グループ。developerグループはTICKET_ADMIN権限は持っていないが、leader権限はTICKET_ADMIN権限を持っている)。ワークフローの詳細については、[wiki:TracWorkflow Tracのチケットワークフローシステム]をご覧ください。
+
+== リポジトリブラウザでのWord/Excelファイルの閲覧 ==
+Kanonでは、xdocviewプラグインによりWordやExcelのファイルの内容をリポジトリブラウザ上で確認できるようになっています。この機能を利用するには、Subversionのクライアントの設定を行い、svn:mime-typeプロパティを設定する必要があります。
+
+なお、xdocviewプラグインの動作にはhishida様作の[http://www31.ocn.ne.jp/~h_ishida/xdoc2txt.html xdoc2txt]が必要ですが、hishida様のご厚意によりKanonにxdoc2txtを含ませて頂いています。Kanonを販売など行う場合は、xdoc2txtは利用できないのでご注意ください。
+
+=== Subversionクライアントの設定 ===
+クライアント上のC:\Documents and Settings\ユーザ名\Application Data\Subversion\configに下記の記述を追加しmimeタイプの設定を行います。
+
+{{{
+*.rtf = svn:mime-type=application/rtf
+*.doc = svn:mime-type=application/msword
+*.xdoc = svn:mime-type=application/msword
+*.xls = svn:mime-type=application/vnd.ms-excel
+*.xlsx = svn:mime-type=application/vnd.ms-excel
+*.ppt = svn:mime-type=application/vnd.ms-powerpoint
+*.pptx = svn:mime-type=application/vnd.ms-powerpoint
+*.pdf = svn:mime-type=application/pdf
+}}}
+
+
+
+== メールアーカイブ機能 ==
+MailArchiveプラグインにより、メーリングリストのメールなどをアーカイブすることができます。MailArchiveプラグインはKanonにインストールされていますが、初期状態では無効になっています。有効にするには、管理メニューからプラグインを選択し、''''''tracmailarchive'''プラグインの全てのプラグインにチェックを入れ'''有効にしてください。MailArchiveプラグインの利用方法は、下記のサイトをご覧ください。'''''
+
+ * [http://weekbuild.sakura.ne.jp/trac/wiki/TracDoc/MailArchivePlugin メールをTracに蓄積 - MailArchiveプラグイン(Trac0.11用)]
+
+なお、メールをアーカイブするコマンドTracMailArchive-admin.exeは、%TRAC_LIGHT_HOME%\python\Scriptsディレクトリにインストールされています。
+
+== リポジトリ内のOffice文書、PDF、日本語ファイルの検索 ==
+Tracのデフォルトのリポジトリ検索エンジンでは、日本語ファイルの検索を行うことができません。管理メニューからプラグインを選択し、trachyperestraierpluginのSearchHyperEstraierModuleを有効にすることにより、Office文書、PDF、日本語ファイルの検索ができるようになります。プラグインを有効にする他にインデックスの作成とtrac.iniの設定が必要になります。
+
+インデックスの作成や設定の詳細については[wiki:SearchHyperEstraier SearchHyperEstraierプラグインの項目]を参照してください。
+
+== チケット操作Tips ==
+
+=== チケットの時間計測 ===
+TimingAndEstimateプラグインにより、チケットに作業時間を投入することにより、作業時間の集計ができます。TimingAndEstimateプラグインを有効にするには、管理メニューからプラグインを選択し、'''timingandestimationpluginの下の全てのプラグインにチェックに入れ'''有効にしてください。設定後、Tracの画面にエラーが表示されますが、WindowsのスタートメニューのTracからコマンドプロンプトを起動し、下記のコマンドにてプロジェクトをアップグレードしてください(下記の例はSampleProjectを変更した場合の例です)。
+
+{{{
+# trac-admin /var/opt/kanon/SampleProject upgrade
+# chown www-data.www-data -R /var/opt/kanon/
+もしくは
+# chown apache.apache -R /var/opt/kanon/
+}}}
+
+=== バーンダウンチャート ===
+プロセスにagileを選択すると、Steins;Chartプラグインによりバーンダウンチャートを表示することができます。
+
+=== サブチケットのサポート ===
+あるチケットに関連するチケットを作成するには、サブチケットプラグインを利用すると便利です。例えば、バグのチケットに修正作業のチケットを紐づけたり、プロダクトバックログにスプリントバックログを紐づけたりすることができます。
+
+サブチケットプラグインを有効にするには、管理メニューからプラグインを選択し、'''tracsubticketspluginの下の全てのプラグインにチェックに入れ'''有効にしてください。設定後、Tracの画面にエラーが表示されますが、WindowsのスタートメニューのTracからコマンドプロンプトを起動し、下記のコマンドにてプロジェクトをアップグレードしてください(下記の例はSampleProjectを変更した場合の例です)。
+
+{{{
+# trac-admin /var/opt/kanon/trac/SampleProject upgrade
+# chown www-data.www-data -R /var/opt/kanon/
+もしくは
+# chown apache.apache -R /var/opt/kanon/
+}}}
+
+サブチケットプラグインには、サブチケットを作成する際に親チケットのチケットタイプに応じて子チケットのチケットタイプを指定する機能があります。例えば、「ストーリー」の子チケットを「タスク」にするには、次のようにtrac.iniに設定します。
+{{{
+[subtickets]
+ストーリー=タスク
+}}}
+なお、サブチケット作成時のチケットの種類を選ぶ手間を省くための機能であり、子チケットの種類を制限するものではありません。
+
+=== チケットの依存関係の管理 ===
+MasterTicketプラグインにより、チケットの依存関係を管理することができます。MasterTicketプラグインを有効にするには、管理メニューからプラグインを選択し、tracmasterticketsの
+
+ * MasterTicketsSystem
+ * MasterTicketsModule
+
+を有効にしてください。設定後、Tracの画面にエラーが表示されますが、WindowsのスタートメニューのTracからコマンドプロンプトを起動し、下記のコマンドにてプロジェクトをアップグレードしてください(下記の例はSampleProjectを変更した場合の例です)。
+
+{{{
+> trac-admin C:\TracLight\projects\trac\SampleProject upgrade
+}}}
+
+
+サブチケットプラグインとの違いは、MasterTicketプラグインは、Aというタスクを実行した後にBを実行するといったようなタスクの依存関係を管理するのに適しています。一方、サブチケットプラグインは、例えば、「ユーザ管理機能の作成」というタスクには、ユーザ管理機能の「設計」と「実装」と「試験」という3つのタスクにより実現されるタスクの親子関係を管理するのに適しています。
+
+=== チケットクローズ時の進捗率自動設定 ===
+チケットをクローズじた時に、進捗率を自動的に100%にすることができます。この機能を有効にするには、管理メニューのプラグインからtracganttcalendarpluginのCompleteTicketObserverプラグインを有効にしてください。デフォルトの条件では、チケットをクローズしたときに、解決方法に
+「対応済」もしくは「不正」を選択したときに100%になるようになっています。また、進捗率を定義するカスタムフィールドはcompleteになっています。
+
+この条件を変更したい場合は、[/admin/tracini/ganttcalendar 管理メニューのtrac.iniの設定のganttcalendar]をご覧ください。
+
+=== Wikiへのガントチャートの挿入(3.0.7-)===
+次のようなマクロをWikiに記述することにより、ガントチャートをWiki内に埋め込むことができます。
+{{{
+[[TracJSGanttChart(status!=closed&milestone=1.0リリース)]] 
+}}}
+引数には、TicketQueryの引数が利用することができます
+

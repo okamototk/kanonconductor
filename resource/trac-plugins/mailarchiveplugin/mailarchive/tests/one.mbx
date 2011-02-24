@@ -1,0 +1,16 @@
+From - Sat Nov 03 19:06:14 2008
+Received: by 192.168.0.1 with HTTP; Sun, 29 Jun 2008 22:26:59 -0700 (PDT)
+Message-ID: <28056cd5-24e1-4d94-941b-d25a01d35dcdtestmail@example.com>
+Date: Sat, 01 Nov 2008 19:06:14 +0900
+From: testmail@example.com
+To: testmail@example.com
+Subject: Test Mail 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Delivered-To: mailarchivetest@example.com
+
+This is Test Mail .
+
+

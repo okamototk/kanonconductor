@@ -1,0 +1,97 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+<!--
+
+ Copyright (c) 2007-2008 by nexB, Inc. http://www.nexb.com/ - All rights reserved.
+ Author: Francois Granade - fg at nexb dot com
+ Licensed under the same license as Trac - http://trac.edgewall.org/wiki/TracLicense
+
+-->
+  <xi:include href="layout.html" />
+  <head>
+    <title>チケットのインポート</title>
+  </head>
+
+  <body>
+
+<!--
+<div id="ctxtnav" class="nav">
+    <h2>Ticket import</h2>
+    <ul>Importing tickets</ul>
+</div>
+-->    
+
+<div id="content" class="report">
+<h1>チケットのインポート</h1>
+
+<p>
+このモジュールはExcelかカンマ区切りのファイル(CSV)から、チケットを一括でインポートします。(CVSはUTF-8しかサポートしていません。Excelをお勧めします)
+</p>
+<p>
+インポートするファイルもしくはワークシートは以下のようになっている必要があります。
+<ul>
+<li>最初の行は、インポートするフィールドを列挙します</li>
+<li>残りの行にはインポートするデータを記載します</li>
+</ul>
+</p>
+<p>
+フィールドはTracのフィールドである必要があります。このTracでの有効なフィールドは
+<py:for each="numfields, field in enumerate(fields)">
+<b>${field}</b><py:choose test="numfields"><py:when test="len(fields) - 1"> </py:when><py:when test="len(fields)"></py:when><py:otherwise>, </py:otherwise></py:choose></py:for> です。（※訳注：カスタムフィールドを使っている場合ちゃんとここにカスタムフィールドも表示されます）
+
+フィールド名は大文字小文字問いません。’summary’と’Summary’と’SUMMARY’は同じフィールドを指します。フィールドの並び順は関係ありません。もしTracのフィールド以外のカラムをインポートしたい場合は、まずTrac上でカスタムフィールドを作成しておく必要があります。(カスタムフィールドの作成はとても簡単ですが、Tracの管理者によって設定ファイルの編集を行うことで対応する必要があります)
+</p>
+<p>必須のフィールドは、summaryフィールドかticketフィールドのいずれかのみです。
+<ul>
+   <li> <b>summary</b>. もし同じsummary<py:if test="reconciliate_by_owner_also">と同じowner</py:if>が存在した場合は、チケットは追加されず、他のフィールドを変更もしくは追加する形でインポートします(もちろん置き換えられた値は変更履歴に残っています)。結果として、<b>同じsummary<py:if test="reconciliate_by_owner_also">とowner</py:if>を持つ２つのチケットが出来ることはないようになっています</b>。もしsummary<py:choose><py:when test="reconciliate_by_owner_also">とowner</py:when><py:otherwise><!--snip--></py:otherwise></py:choose>が既存のものと同一でなかった場合は、新規のチケットが作成されます。</li>
+</ul>
+または:
+<ul>
+<li> <b>ticket</b>. このフィールドにはチケット番号を含めます。もし同じ番号のチケットが見つかった場合は、上書きします。このカラムが空の場合は、新しいチケットとしてインポートします。これはexportして、Excel上で編集し、再インポートするような場合に有効です</li>
+</ul>
+</p>
+<p>
+最初に、変更のプレビュー画面が表示され、その後インポートの実行が可能になります。最初のステップ(アップロードとプレビュー)ではデータベースに変更は加えられません。
+</p>
+<p>
+アップロードしたファイル中のComponentsやMilestone等がTracに存在しない場合は、追加されます。これらの項目は作業後に管理セクションから変更することも出来ます。
+</p>
+<p>
+     <p><label for="sheet">もしExcelファイルをアップロードする場合は、インポートするワークシートの番号(1番から開始)を指定してください。</label></p>
+</p>
+
+<form id="importer" method="post" enctype="multipart/form-data" action="">
+   <div class="field">
+     <label for="import-file">File to import:</label>
+       <input type="file" name="import-file" />
+   </div>
+   <br/>
+   <div class="field">
+     <label for="sheet">For an Excel spreadsheet, index of the worksheet to import:</label>
+       <select name="sheet">
+       <option value="1">1</option>
+       <option value="2">2</option>
+       <option value="3">3</option>
+       <option value="4">4</option>
+       <option value="5">5</option>
+       <option value="6">6</option>
+       <option value="7">7</option>
+       <option value="8">8</option>
+       <option value="9">9</option>
+       </select>
+       <i>注意：何もデータが含まれていないワークシートはカウントから除外します。</i><br />
+       <i>訳者追加：csvファイルをアップロードする場合の文字コードはUTF8にすること。</i>
+   </div>
+  <div class="buttons">
+   <input type="hidden" name="action" value="upload" />
+   <input type="submit" value="チケットのプレビュー" />
+<!--   <input type="submit" name="cancel" value="Cancel" /> -->
+  </div>
+ </form>
+</div>
+  </body>
+</html>

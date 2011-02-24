@@ -1,0 +1,36 @@
+--- trac/ticket/templates.org/ticket.html	2010-12-03 01:29:04.875067300 +0900
++++ trac/ticket/templates/ticket.html	2010-12-03 01:15:50.795510900 +0900
+@@ -139,7 +139,7 @@
+                         </py:for></py:if>
+                     </py:if>
+                   </span>
+-                  <i18n:msg params="date, author">Changed ${dateinfo(change.date)} ago by ${authorinfo(change.author)}</i18n:msg>
++                  ${dateinfo(change.date)}前 <span class="author">${change.author}</span>
+                 </h3>
+                 <py:if test="not show_editor and comment_version == max_version">
+                   <form py:if="'cnum' in change and can_edit_comment" method="get" action="#comment:${change.cnum}">
+--- trac/ticket/templates.org/ticket_box.html	2010-12-03 01:29:04.905067300 +0900
++++ trac/ticket/templates/ticket_box.html	2010-12-03 01:08:03.913806700 +0900
+@@ -28,11 +28,11 @@
+     <tr>
+       <th id="h_reporter">Reported by:</th>
+       <td headers="h_reporter" class="searchable">
+-        ${defined('reporter_link') and reporter_link or authorinfo(ticket.reporter)}
++        <span class="author">${ticket.reporter}</span>
+       </td>
+       <th id="h_owner">Owned by:</th>
+       <td headers="h_owner">
+-        ${ticket.owner and (defined('owner_link') and owner_link or authorinfo(ticket.owner)) or ''}
++        <span class="author">${ticket.owner}</span>
+       </td>
+     </tr>
+     <tr py:for="row in group(fields, 2, lambda f: f.type != 'textarea')"
+@@ -60,7 +60,7 @@
+     <h3 id="comment:description">
+       Description
+       <span py:if="description_change" class="lastmod" title="$description_change.date">
+-        <i18n:msg params="author">(last modified by ${authorinfo(description_change.author)})</i18n:msg>
++        <i18n:msg params="author"><span class="author">${description_change.author}</span></i18n:msg>
+         (<a href="${href.ticket(ticket.id, action='diff', version=description_change.cnum)}">diff</a>)
+       </span>
+     </h3>

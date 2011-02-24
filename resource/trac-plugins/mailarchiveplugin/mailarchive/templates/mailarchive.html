@@ -1,0 +1,118 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="layout.html" />
+  <xi:include href="macros.html" />
+  <head>
+    <title>${_('MailArchive')}</title>
+    <link href="${req.href.chrome('mailarchive/css/mailarchive.css')}" type="text/css" rel="stylesheet" />
+  </head>
+
+  <body>
+
+    <div id="content" class="mailarc">
+
+     <form id="prefs" method="get" action="">
+       <input type="hidden" name="category" value="${req.args.get('category')}" />
+       <div>表示切替</div>
+       <fieldset>
+         <legend>ソート</legend>
+         <ul>
+           <li><label><input type="radio" name="reversemode" value="on" checked="${req.args.get('reversemode') == 'on' or None}" />降順</label>
+           </li>
+           <li><label><input type="radio" name="reversemode" value="off" checked="${req.args.get('reversemode') != 'on' or None}" />昇順</label>
+           </li>
+         </ul>
+       </fieldset>
+       <fieldset>
+         <legend>ツリー表示</legend>
+         <ul>
+           <li><label><input type="radio" name="flatmode" value="off" checked="${req.args.get('flatmode') != 'on' or None}" />ON</label>
+           </li>
+           <li><label><input type="radio" name="flatmode" value="on" checked="${req.args.get('flatmode') == 'on' or None}"  />OFF</label>
+           </li>
+         </ul>
+       </fieldset>
+       <div class="buttons">
+         <input type="submit" name="update" value="更新"/>
+       </div>
+     </form>
+    
+     <form id="prefs" method="get" action="">
+       <py:for each="ml in mls">
+       <div class="category_name">$ml.name</div>
+       <ul>
+       <py:for each="subitem in ml.yearmonths">
+         <li class="category_li">
+         <py:choose test="subitem.href">
+           <py:when test="">
+             <a href="${subitem.href + '&amp;reversemode='}">$subitem.year/$subitem.month ($subitem.count)</a>
+           </py:when>
+           <py:otherwise>
+             $subitem.year/$subitem.month ($subitem.count)
+           </py:otherwise>
+         </py:choose>
+         </li>
+       </py:for>
+       </ul>
+       </py:for>
+     </form>
+
+     <h2>
+       $nameの$year年$month月のメール <span class="numresults" py:if="page_results">(${page_results.displayed_items()})</span>
+     </h2>
+ 
+ 
+<py:def function="show_thread(mail)">
+  <li class="thread_li">
+    <py:choose>
+      <a py:when="mail.has_attachments(req)" class="thread_subject_clip"
+        href="${req.href.mailarchive(mail.id)}">[$mail.id] ${mail.get_subject()}</a>
+      <a py:otherwise=""
+        href="${req.href.mailarchive(mail.id)}">[$mail.id] ${mail.get_subject()}</a>
+      <py:with vars="related_tickets=mail.get_related_tickets(req);">
+        <py:if test="len(related_tickets) > 0">
+          <span class="related_tickets">
+            --- (関連チケット: 
+            <py:for each="ticket in related_tickets">
+              <a href="${req.href.ticket(ticket.id)}">#${ticket.id}</a>&nbsp;
+            </py:for>
+            )
+          </span>
+        </py:if> 
+      </py:with>
+    </py:choose>
+    <br />
+    <span class="thread_from">${mail.get_fromtext()}</span>
+    <span class="thread_senddate">${mail.get_senddate()}</span>
+    <py:if test="not flatmode">
+      <py:for each="child in mail.get_children(cached_mails=cached_mails)">
+        <ul class="thread_ul">
+          ${show_thread(child, cached_mails)}
+        </ul>
+      </py:for>
+    </py:if>
+    </li>
+</py:def>
+
+<xi:include py:with="paginator = page_results" href="page_index.html" />
+
+    <div py:if="len(mails)>0" id="mail_thread">
+      <ul py:for="mail in mails" class="thread_ul">
+        ${show_thread(mail)}
+      </ul>
+    </div>
+
+<xi:include py:with="paginator = page_results" href="page_index.html" />
+
+      <div id="help">
+      </div>
+
+    </div>
+  </body>
+</html>
+
+

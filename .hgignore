@@ -1,0 +1,11 @@
+syntax:glob
+*.pyc
+*.mo
+*.class
+*~
+#*
+*/build/*
+*/dist/*
+*.egg-info
+
+

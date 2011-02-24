@@ -1,0 +1,75 @@
+fieldset.collapsed {
+	border-width: 0px;
+	margin-bottom: 0px;
+	padding: 0px .5em;
+}
+
+fieldset.collapsed div {
+	display: none
+}
+
+.thread_ul {
+	padding-left: 20px;
+	margin-left: 0px;
+}
+
+.thread_li {
+	padding-left: 0px;
+	margin-left: 0px;
+}
+
+.thread_subject_clip {
+	padding-right: 20px;
+	background-image: url(../png/clip.png);
+	background-repeat: no-repeat;
+	background-position: right top;
+}
+
+.thread_from {
+	font-size: 80%;
+	color: #666
+}
+
+.thread_senddate {
+	font-size: 80%;
+	color: #666
+}
+
+.related_tickets {
+	font-size: 80%;
+	color: #666
+}
+
+#mail_threads {
+	border: 1px outset #999966;
+	padding: 1em;
+}
+
+#prefs ul {
+	padding-left: 10px;
+	margin: 0px 3px;
+}
+
+#prefs li {
+	padding-left: 0px;
+	margin: 0px 3px;
+}
+
+#prefs .prefs_from {
+	color: #666
+}
+
+#prefs {
+	width: 120px;
+}
+
+* html #prefs {
+	width: 14em
+}
+
+/* Set width only for IE */ /*
+** Style used for displaying Mail icon in Timeline
+*/
+.timeline dt.mailarchive a {
+	background-image: url(../png/mail.png);
+}

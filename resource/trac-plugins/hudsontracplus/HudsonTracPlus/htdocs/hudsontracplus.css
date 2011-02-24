@@ -1,0 +1,5 @@
+dt.build-success a { background-image: url(blue.png) !important }
+dt.build-unstable a { background-image: url(yellow.png) !important }
+dt.build-failure a { background-image: url(red.png) !important }
+dt.build-aborted a { background-image: url(grey.png) !important }
+dt.build-no-status a { background-image: url(grey_anime.gif) !important }

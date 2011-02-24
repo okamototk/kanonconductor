@@ -1,0 +1,44 @@
+#mainnav {
+  background: #ccf;
+  border: 0px;
+}
+
+#mainnav ul li {
+color: black;
+background-image:url('img/mainnav.png');
+line-height: 17px;
+}
+
+#mainnav ul li.active a:visited{
+color: black;
+background-image:url('img/mainnav_active.png');
+font-weight: normal;
+line-height: 17px;
+}
+
+#mainnav ul li a:visited {
+color: black;
+text-decoration:none;
+line-height: 17px;
+}
+
+#mainnav ul li a:link {
+color: black;
+background-image:url('img/mainnav.png');
+text-decoration:none;
+line-height: 17px;
+}
+
+#mainnav ul li.active a:link {
+color: black;
+background-image:url('img/mainnav_active.png');
+text-decoration:none;
+line-height: 17px;
+}
+
+#mainnav ul li a:hover {
+color: black;
+background:url('img/mainnav_active.png') 0 0 repeat-x;
+font-weight: normal;
+line-height: 17px;
+}

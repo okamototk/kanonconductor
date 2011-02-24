@@ -1,0 +1,13 @@
+python-dev
+python-setuptools
+libapache2-mod-wsgi
+apache2
+mercurial
+subversion
+python-pysqlite2
+sqlite3
+python-subversion
+python-excelerator
+libapache2-svn
+gcc
+bzr

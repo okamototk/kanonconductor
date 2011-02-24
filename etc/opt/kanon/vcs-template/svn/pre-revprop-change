@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ "$4" = "svn:log" ]
+then
+    if [ "$3$ = "admin" ]
+    then 
+        exit 0
+    fi
+fi
+
+exit 1

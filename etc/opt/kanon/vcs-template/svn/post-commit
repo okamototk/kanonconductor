@@ -1,0 +1,15 @@
+#!/bin/sh
+
+PROJECT=test2
+
+REPOS="$1"
+REV="$2"
+
+export PYTHONPATH=/opt/kanon/lib/python2.6:/opt/kanon/lib/python2.6/site-packages
+export PATH=/opt/kanon/bin:$PATH
+TRAC_ENV=/var/opt/kanon/trac/`echo $REPOS|sed -e "s/\(.*\)\/\(.*$\)/\2/"`
+echo $REPOS > /tmp/log3
+echo $TRAC_ENV >/tmp/log1
+trac-admin $TRAC_ENV changeset added $REPOS $REV 2> /tmp/log2
+
+

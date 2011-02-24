@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="Windows-31J"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--ここをカスタマイズ-->
+  <name>WebProject</name>
+  <artifactId>web</artifactId>
+  <groupId>com.example</groupId>
+  <version>0.1</version>
+  <url>http://example.com/trac/web/</url>
+  <description>
+    Sample Project for web.
+  </description>
+
+  <packaging>war</packaging>
+
+  <!-- Mavenのリポジトリの設定 -->
+  <repositories>
+    <repository>
+      <id>com.example</id>
+      <name>My Maven Repository</name>
+      <!-- localhost をこのサーバのホスト名に置換 -->
+      <url>http://localhost/maven</url>
+      <layout>default</layout>	  
+    </repository>
+  </repositories>
+
+  <!-- 配布先の設定 -->
+  <distributionManagement>
+    <repository>
+      <id>local-repository</id>
+      <url>file:///var/www/maven</url>
+    </repository>
+    <site>
+      <id>maven.apache.org</id>
+      <url>file:///var/www/report/SampleProject/WebProject</url>
+    </site>
+  </distributionManagement>
+
+  <!-- SVNの設定 -->
+  <scm>
+    <!-- connection,developerConnection,urlの localhost をこのサーバのホスト名に置換 -->
+    <connection>scm:svn:http://localhost/svn/SampleProject/WebProject/trunk/</connection>
+    <developerConnection>scm:svn:http://localhost/svn/SampleProject/WebProject/trunk/</developerConnection>
+    <url>http://localhost/svn/SampleProject/WebProject/</url>
+  </scm>
+
+  <!-- CIの設定 -->
+  <ciManagement>
+    <system>jenkins</system>
+<!-- 
+    <notifiers>
+      <notifier>
+        <type>mail</type>
+        <configuration>
+          <address>dev-ml@example.com</address>
+        </configuration>
+      </notifier>
+    </notifiers>
+-->
+  </ciManagement>
+
+  <!-- 開発者のリストを記述(省略可能) -->
+  <developers>
+    <developer>
+      <name>Takashi Okamoto</name>
+      <email>hoge@example.com</email>
+    </developer>
+  </developers>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>library</artifactId>
+      <version>0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <reporting>
+    <plugins>
+
+      <!-- siteプラグインの出力設定 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <outputEncoding>UTF-8</outputEncoding>
+          <inputEncoding>Windows-31J</inputEncoding>
+          <locales>ja</locales>
+        </configuration>
+      </plugin>
+
+      <!-- javadocの出力 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <encoding>Windows-31J</encoding>
+          <docencoding>UTF-8</docencoding>
+        </configuration>
+      </plugin>
+
+      <!-- CheckStyleのレポート出力 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+
+      <!-- FindBugsのレポート出力 -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- PMDのレポート出力 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+
+      <!-- カバレッジの出力 -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <sourceEncoding>Windows-31J</sourceEncoding>
+        </configuration>
+      </plugin>
+
+      <!-- メトリックスの出力 -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jdepend-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javancss-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- クロスリファレンス -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+	  <inputEncoding>Windows-31J</inputEncoding>
+	  <outputEncoding>UTF-8</outputEncoding>
+        </configuration>
+      </plugin>
+
+      <!-- テストレポートの設定 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+  </reporting>
+
+  <build>
+    <plugins>
+
+      <!-- Javaコンパイラの設定 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+          <encoding>Windows-31J</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- Webコンテナの設定 -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <configuration>
+          <contextPath>/WebProject</contextPath>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8080</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# usase:
+#
+# $ trac-commit-hook <Project Name> <Repository Name> <Revision>
+# 
+KANON_TRACPATH=/var/opt/kanon/trac
+KANON_HOME=/opt/kanon
+export PYTHONPATH=$KANON_HOME/lib/python2.6:$KANON_HOME/lib/python2.6/site-packages
+LANG=C
+
+/opt/kanon/bin/trac-admin $KANON_TRACPATH/$1 changeset added "$2" "$3"

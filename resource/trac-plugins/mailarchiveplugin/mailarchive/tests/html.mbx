@@ -1,0 +1,30 @@
+From aaa@aa.aa Wed May 14 09:26:29 2008
+From: aaa@aa.aa
+Message-ID: <28056cd5-24e1-4d94-941b-d25a01d35dcdtestmail@example.com>
+To: bbb@aa.aa
+Subject: test
+Date: Tue, 13 May 2008 18:15:00 +0900
+MIME-Version: 1.0
+Content-Type: text/html;
+	charset="iso-2022-jp"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2900.3198
+---
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-2022-jp">
+<META NAME="Generator" CONTENT="MS Exchange Server version 6.5.7036.0">
+<TITLE>test</TITLE>
+</HEAD>
+<BODY>
+<!-- Converted from text/plain format -->
+
+<P><FONT SIZE=2>テスト</FONT>
+</P>
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,107 @@
+[[PageOutline]]
+= XXプロジェクトのTracにようこそ =
+このページはKanonによるサンプルページです。このページをカスタマイズしてプロジェクトのページを作成してください。また、[wiki:TLSetup Kanonセットアップガイド]を参考にして、ユーザアカウントの作成とアクセス権の設定を行ってください。
+
+== はじめに ==
+※ XXプロジェクトの概要をここに記述してください。多くの人はプロジェクトの概要に無関心ですが、プロジェクトの背景、目的などを定義し、メンバーが確認できる場所に記述することはメンバーのモチベージョンを保つ上で非常に重要です。プロジェクトの概要・目的を個々に記すことを推奨します。
+
+== ニュース ==
+※特筆すべきニュースがあれば、ここに記述します。
+ * 2007/04/01 バージョン1.0リリース
+ * 2007/03/01 結合試験終了打ち上げ
+ * 2007/02/28 結合試験完了
+
+== メーリングリスト ==
+※プロジェクトで利用するメーリングリストの情報等があれば記述します。
+||アドレス||説明||
+||kanon-dev@example.com||Kanon開発用メーリングリスト||
+||kanon-support@example.com||Kanonサポート用メーリングリスト||
+
+== リンク、共有フォルダ  ==
+他のWebサーバへのリンクや共有フォルダの情報があれば、ここに記述します。
+
+== メンバー ==
+プロジェクトメンバーに関する情報を記述します。
+||名前||役割||
+||山田太郎||リーダ||
+||山田次郎||プログラマ||
+||山田三郎||テスタ||
+
+== 議事録 ==
+打ち合わせ議事録等を下記のWikiに記述します。
+ * [wiki:Gijiroku 議事録]
+
+== ドキュメント ==
+ * [wiki:Rules 指針類]
+ * [wiki:Release リリース管理]
+
+== リソース ==
+=== SVNリポジトリ ===
+SVNのリポジトリ情報を記述してください。SampleProjectのSVNリポジトリは下記の通りです。
+ * [//svn/SampleProject/ SampleProjectのリポジトリ]
+現在、下記の2つのコンポーネントが登録されています。
+||コンポーネント名||説明||
+||[//svn/SampleProject/LibraryProject LibraryProject]||ライブラリを作成するサンプルプロジェクト||
+||[//svn/SampleProject/WebProject WebProject]||Webアプリケーションを作成するサンプルプロジェクト||
+
+=== Mavenリポジトリ ===
+※ここのサンプルは現在動作しません。
+
+MavenはMavenのリポジトリでライブラリ(jar)を管理します。ライブラリをアップロードするMavenリポジトリは下記の通りです。
+ * [//maven/ Mavenリポジトリ]
+初期状態では、空ですが、次のようにしてKanonで用意しているLibraryProjectのライブラリをアップロードするとライブラリが閲覧できます。
+{{{
+> svn --username guest co http://localhost/svn/SampleProject/LibraryProject/trunk
+> cd trunk
+> mvn deploy
+}}}
+なお、ライブラリプロジェクトはテストが失敗するように作られています。テストが失敗した場合は、src/test/java/org/ultimania/SampleLibTest.javaの下記の部分を修正してもう一度mvn deployを実行してください。
+{{{
+   assertEquals(lib.detectLangType("pyton"), SampleLib.PYTHON);
+   ↓
+   assertEquals(lib.detectLangType("python"), SampleLib.PYTHON);
+}}}
+
+
+アップロードしたLibraryProjectのライブラリを利用してKanonで用意しているWebProjectをビルドするには、次のようにします(この操作は、Kanonをインストールしたマシン上でなくても構いません。各開発者の端末で実行することができます)。
+{{{
+> svn --username guest co http://localhost/svn/SampleProject/WebProject/trunk
+> cd trunk
+}}}
+pom.xmlの下記の部分を編集し、Kanonをインストールしたホストを設定
+{{{
+      <!-- localhost をこのサーバのホスト名に置換 -->
+      <url>http://localhost/maven</url>
+}}}
+warを作成
+{{{
+> mvn package
+}}}
+targetディレクトリにwarファイルが作成されます。
+
+Webコンテナ実行
+{{{
+> mvn jetty:run
+}}}
+ブラウザでhttp://localhost:8080/WebProject へアクセスすると、Webアプリの動作を確認できます。
+
+=== レポート ===
+Mavenのレポートは下記の場所にあります。
+ * [//report/ レポート]
+初期状態では空ですが、次のようにしてLibraryProjectのレポートを作成するとレポートを閲覧できます。
+{{{
+> svn --username guest co http://localhost/svn/SampleProject/LibraryProject/trunk
+> cd trunk
+> mvn site-deploy
+}}}
+Kanonのレポートでは、ユニットテスト、カバレッジ計測、コードチェック(CheckStyle、PMD、FindBugs)、メトリクス((JDepend、JavaNCSS)をレポートします。
+
+== スタートポイント ==
+Tracの情報については、下記のページをご覧ください。
+ * TracGuide --  同梱ドキュメント
+ * [http://trac.edgewall.org/ The Trac project] -- Trac Open Source Project
+ * [http://trac.edgewall.org/wiki/TracFaq Trac FAQ] -- よくある質問とその回答
+ * TracSupport --  サポートを受けるための方法
+ * TracJa -- 日本語化情報
+
+この Wiki ページの完全なリストは、 TitleIndex をご覧下さい。

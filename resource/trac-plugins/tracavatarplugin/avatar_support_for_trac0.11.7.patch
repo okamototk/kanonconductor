@@ -1,0 +1,40 @@
+diff -uNr trac.orig/trac/templates/macros.html trac/trac/templates/macros.html
+--- trac.orig/trac/templates/macros.html	2010-08-27 09:13:07.250506200 +0900
++++ trac/trac/templates/macros.html	2010-08-27 09:17:56.302039000 +0900
+@@ -36,10 +36,10 @@
+   -
+   -      We take care to not insert any extra space.
+   -->
+-  <py:def function="authorinfo(author, email_map=None)"><py:choose><py:when test="author"><py:with
++  <py:def function="authorinfo(author, email_map=None)"><span class="author"><py:choose><py:when test="author"><py:with
+     vars="author = show_email_addresses and email_map and '@' not in author and email_map[author] or author">${
+       author and format_author(author) or 'anonymous'
+-  }</py:with></py:when><py:otherwise>anonymous</py:otherwise></py:choose></py:def>
++  }</py:with></py:when><py:otherwise>anonymous</py:otherwise></py:choose></span></py:def>
+ 
+   <!--!  Display a sequence of path components.
+   -
+diff -uNr trac.orig/trac/versioncontrol/templates/dir_entries.html trac/trac/versioncontrol/templates/dir_entries.html
+--- trac.orig/trac/versioncontrol/templates/dir_entries.html	2010-08-27 09:13:08.381570900 +0900
++++ trac/trac/versioncontrol/templates/dir_entries.html	2010-08-27 09:33:42.157138800 +0900
+@@ -21,7 +21,7 @@
+           ${change and dateinfo(change.date) or '-'}
+         </td>
+         <td class="change">
+-          <span class="author" py:if="change">${authorinfo(change.author)}:</span>
++          <span py:if="change">${authorinfo(change.author)}:</span>
+           <span class="change" py:choose="" py:with="chgset_context = context('changeset', change.rev)">
+             <py:when test="not change or 'CHANGESET_VIEW' not in perm(chgset_context.resource)">-</py:when>
+             <py:when test="wiki_format_messages">
+diff -uNr trac.orig/trac/web/auth.py trac/trac/web/auth.py
+--- trac.orig/trac/web/auth.py	2010-08-27 09:13:08.648586200 +0900
++++ trac/trac/web/auth.py	2010-08-27 09:18:50.281126400 +0900
+@@ -85,7 +85,7 @@
+ 
+     def get_navigation_items(self, req):
+         if req.authname and req.authname != 'anonymous':
+-            yield ('metanav', 'login', _('logged in as %(name)s', name=req.authname))
++            yield ('metanav', 'login', tag.span(req.authname,class_='author'))
+             yield ('metanav', 'logout',
+                    tag.a(_('Logout'), href=req.href.logout()))
+         else:

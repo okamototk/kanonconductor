@@ -1,0 +1,57 @@
+= リリース処理 =
+ここでは、LibraryProjectを例にリリースの手順を説明します。LibraryProjectは次のようにしてチェックアウトします。
+{{{
+> svn co http://localhost/SampleProject/LibraryProject/trunk
+}}}
+
+== 1.リリース候補の設定 ==
+pom.xmlを編集し、バージョンをリリース候補に設定します。
+{{{
+  <!-- ここをカスタマイズ -->
+  <name>LibraryProject</name>
+  <groupId>com.example</groupId>
+  <artifactId>library</artifactId>
+  <version>1.0rc1</version>
+  <url>http://example.com/trac/library/</url>
+}}}
+
+== 2.ライブラリのアップロード ==
+ライブラリをビルドし、リポジトリへアップロードします。
+{{{
+ > mvn deploy
+}}}
+ユニットテストに失敗すると、アップロードされません。テストに失敗した場合は、コードを修正します。
+
+== 3.ライブラリのテスト ==
+ライブラリのユニットテストは、2のデプロイ時にテストされています。ここでは、ライブラリの結合試験を行います。結合試験は、ライブラリのプロジェクトとは別のプロジェクトで行う方が良いでしょう。テストに失敗すれば、修正し、1から始めます。リリース候補の番号は1.0rc2のようにインクリメントします。
+
+== 4.リリース ==
+結合試験に合格したら、ライブラリのバージョンをリリースナンバーにします。
+{{{
+  <!-- ここをカスタマイズ -->
+  <name>LibraryProject</name>
+  <groupId>com.example</groupId>
+  <artifactId>library</artifactId>
+  <version>1.0</version>
+  <url>http://example.com/trac/library/</url>
+}}}
+リポジトリへデプロイします。
+{{{
+> mvn deploy
+}}}
+Subversionへコミットしタグを打ちます。
+{{{
+> svn --username guest commit -m "Release 1.0"
+> svn --username guest cp http://localhost/SampleProject/LibraryProject/trunk 
+                          http://localhost/SampleProject/LibraryProject/tags/1.0
+}}}
+== 5.バージョンを開発バージョンに設定 ==
+上書きを防止するためバージョンを開発バージョン(ここでは1.1dev)に設定します。
+{{{
+  <!-- ここをカスタマイズ -->
+  <name>LibraryProject</name>
+  <groupId>com.example</groupId>
+  <artifactId>library</artifactId>
+  <version>1.1dev</version>
+  <url>http://example.com/trac/library/</url>
+}}}
