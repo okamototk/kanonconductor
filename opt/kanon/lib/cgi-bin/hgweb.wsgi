@@ -14,7 +14,7 @@ os.environ["HGENCODING"] = "UTF-8"
 #import cgitb; cgitb.enable()
 
 # enable demandloading to reduce startup time
-from mercurial import demandimport; demandimport.enable()
+#from mercurial import demandimport; demandimport.enable()
 
 #from mercurial.hgweb import hgweb
 #application = hgweb(config)
