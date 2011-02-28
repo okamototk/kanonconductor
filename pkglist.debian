@@ -1,5 +1,6 @@
 python-dev
 python-setuptools
+python-pygments
 libapache2-mod-wsgi
 apache2
 mercurial

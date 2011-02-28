@@ -1,5 +1,6 @@
 httpd
 python-setuptools
+python-pygments
 sqlite
 mod_dav_svn
 mod_wsgi
