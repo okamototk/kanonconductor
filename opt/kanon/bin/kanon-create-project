@@ -66,6 +66,7 @@ then
  * svn    : Subversion
  * hg     : Mercurial
  * bzr    : Bazaar
+ * git    : Git
  * (なし) : バージョン管理システムを使いません
 
 リポジトリタイプ: "
@@ -81,6 +82,9 @@ then
 elif [ "$REPO_TYPE" = "bzr" ]
 then
    echo "リポジトリにBazaarが選択されました。"
+elif [ "$REPO_TYPE" = "git" ]
+then
+   echo "リポジトリにGitが選択されました。"
 elif [ "$REPO_TYPE" != '' ]
 then
    echo "リポジトリタイプ"$REPO_TYPE"はサポートしてないわよ。正しいリポジトリタイプを入力してね。" 
@@ -173,6 +177,15 @@ then
    echo "[DEFAULT]" >> $KANON_VAR/bzr/$PROJECT_NAME/trunk/.bzr/branch/branch.conf
    echo trac_env=$KANON_VAR/trac/$PROJECT_NAME >> $KANON_VAR/bzr/$PROJECT_NAME/trunk/.bzr/branch/branch.conf
    chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/bzr/$PROJECT_NAME
+elif [ "$REPO_TYPE" = 'git' ]
+then
+   git init --bare $KANON_VAR/git/$PROJECT_NAME
+   pushd .  
+   cd $KANON_VAR/git/$PROJECT_NAME
+   git update-server-info  
+   popd
+   cp $KANON_VAR/git/$PROJECT_NAME/hooks/post-update.sample $KANON_VAR/git/$PROJECT_NAME/hooks/post-update
+   chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/git/$PROJECT_NAME
 elif [ "$REPO_TYPE" != '' ]
 then
    echo "Unsupported repository type: " $REPO_TYPE

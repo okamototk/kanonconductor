@@ -125,6 +125,7 @@ then
     fi
     a2enmod expires
     a2enmod auth_digest
+    a2enmod dav_fs
     a2ensite kanon
     service apache2 stop
     service apache2 start
@@ -161,6 +162,11 @@ fi
 if [ ! -d "$KANON_VAR/svn" ]
 then
     mkdir -p "$KANON_VAR/svn"
+fi
+
+if [ ! -d "$KANON_VAR/git" ]
+then
+    mkdir -p "$KANON_VAR/git"
 fi
 
 # setup SampleProject
