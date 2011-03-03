@@ -170,6 +170,8 @@ elif [ "$REPO_TYPE" = 'bzr' ]
 then
    bzr init-repo $KANON_VAR/bzr/$PROJECT_NAME
    bzr init $KANON_VAR/bzr/$PROJECT_NAME/trunk
+   echo "[DEFAULT]" >> $KANON_VAR/bzr/$PROJECT_NAME/trunk/.bzr/branch/branch.conf
+   echo trac_env=$KANON_VAR/trac/$PROJECT_NAME >> $KANON_VAR/bzr/$PROJECT_NAME/trunk/.bzr/branch/branch.conf
    chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/bzr/$PROJECT_NAME
 elif [ "$REPO_TYPE" != '' ]
 then

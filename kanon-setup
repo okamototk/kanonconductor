@@ -82,7 +82,7 @@ easy_install --prefix $KANON_OPT http://svn.edgewall.org/repos/genshi/tags/0.6.0
 easy_install --prefix $KANON_OPT http://ftp.edgewall.com/pub/babel/Babel-0.9.5.zip
 easy_install --prefix $KANON_OPT http://www.i-act.co.jp/project/products/downloads/Trac-0.12.1.ja1.zip
 easy_install --prefix $KANON_OPT xlrd
-bzr co lp:trac-bzr /tmp/trac-bzr-install
+# bzr co lp:trac-bzr /tmp/trac-bzr-install
 easy_install --prefix /opt/kanon /tmp/trac-bzr-install
 rm -fr /tmp/trac-bzr-install
 
@@ -118,6 +118,7 @@ popd
 ### setup apache and restart
 if [ "$OS" = 'debian' ]
 then
+    cp resource/trac_hook.py /usr/lib/python2.6/dist-packages/bzrlib/plugins
     if [ ! -f /etc/apache2/sites-available/kanon ]
     then
         cp resource/httpd.conf /etc/apache2/sites-available/kanon
@@ -129,6 +130,8 @@ then
     service apache2 start
 elif [ "$OS" = 'rhel' ]
 then
+    mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
+    cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
     if [ ! -f /etc/httpd/conf.d/kanon.conf ]
     then
         cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf

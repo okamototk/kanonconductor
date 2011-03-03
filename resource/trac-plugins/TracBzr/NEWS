@@ -1,0 +1,46 @@
+===========
+What's new?
+===========
+
+unreleased
+==========
+
+0.3.3 (2010-04-10)
+==================
+
+- Improve performance for dir nodes (thanks to James Teh)
+- Include null revision in history of empty branch
+- New ``include_sideline_changes`` configuration option
+
+0.3.2 (2010-02-26)
+==================
+
+- Make Branches macro more robust in case of unexpected bzr errors
+- Fixes bug `#57447`_ (slow changeset display)
+
+.. _#57447: https://bugs.launchpad.net/trac-bzr/+bug/57447
+
+0.3.1 (2010-02-19)
+==================
+
+- Fixed bug `#524325`_ (handling of empty branches)
+- Improved documentation
+
+.. _#524325: https://bugs.launchpad.net/trac-bzr/+bug/524325
+
+0.3.0 (2009-12-18)
+==================
+
+- Apparently the first official release ever
+- Use linear history instead of topologically sorted ancestry in most places
+- Nicer looking revision strings avoiding one layer of url quoting
+- Fixed a number of bugs__
+
+.. __: https://bugs.launchpad.net/trac-bzr/+bugs?field.status%3Alist=FIXRELEASED&field.milestone%3Alist=22392
+
+.. vim: ft=rst
+
+.. emacs
+   Local Variables:
+   mode: rst
+   End:

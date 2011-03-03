@@ -1,0 +1,292 @@
+===================================
+Multi-branch Bazaar plugin for Trac
+===================================
+
+.. contents::
+
+This plugin is based on earlier plugins.  Its main innovation is to make
+multiple branches available, the way Trac normally does.
+
+| Copyright (C) 2005 Edgewall Software
+| Copyright (C) 2005-2006 Christian Boos <cboos@neuf.fr>
+| Copyright (C) 2005 Johan Rydberg <jrydberg@gnu.org>
+| Copyright (C) 2006 Yann Hodique <hodique@lifl.fr>
+| Copyright (C) 2006 Jelmer Vernooij <jelmer@samba.org>
+| Copyright (C) 2006 Lukas Lalinsky <lalinsky@gmail.com>
+| Copyright (C) 2006 Marien Zwart <marienz@gentoo.org>
+| Copyright (C) 2006,2007 Panoramic Feedback <abentley@panoramicfeedback.com>
+| Copyright (C) 2006,2008,2009 Jelmer Vernooij <jelmer@samba.org>
+| Copyright (C) 2009,2010 Martin von Gagern <Martin.vGagern@gmx.net>
+| All rights reserved.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+Features
+========
+
+Repository views
+----------------
+Supports all major Trac views and "changeset:" notation.
+
+Allows a collection of branches to be treated as a "trac repository",
+regardless of whether they are related or in the same bzr repository.
+
+Follows symlinks to branches.
+
+Wiki Macros
+-----------
+
+Branches
+........
+The plugin provides a macro called ``[[Branches]]``
+to list all available branches, together with some information about them,
+like the current revision number and the time of the last commit.
+
+
+Installation
+============
+Basically the `Plugins section of the Trac Guide`__ applies to the
+installation of trac-bzr as well.
+It gives you several options how to install a plugin.
+
+.. __: http://trac.edgewall.org/wiki/TracPlugins
+
+System-wide using easy_install
+------------------------------
+Executing the command "``easy_install TracBzr``" as root should install
+the plugin system-wide, making it available to all trac environments
+on that system.
+
+Per-environment using plugin egg file
+-------------------------------------
+You can download the egg file corresponding to your python version and
+place it in the ``plugins`` directory of a Trac environment.
+
+Building from source
+--------------------
+If you want to build trac-bzr from source, you can either grab a
+source release tarball or a checkout of a development branch. Many
+development branches are `listed on launchpad`__. Once you have
+obtained such a source tree, execute "``python setup.py install``" to
+install the plugin system-wide, or "``python setup.py bdist_egg``" to
+obtain an egg file for installation in a single Trac environment.
+
+.. __: https://code.launchpad.net/trac-bzr
+
+Requirements
+------------
+In order to function properly, trac-bzr requires the packages listed below.
+
+These dependencies are not handled by setuptools, because otherwise
+the plugin would fail to load if one of the dependencies wasn't
+installed with setuptools or similar.
+
+Python 2.4
+  This plugin uses bzrlib directly, so it requires Python 2.4 or greater.
+
+Trac 0.10
+  Some features may only work with Trac 0.11 or even Trac 0.12.
+
+Bazaar 2.0
+  This plugin should work with Bazaar 2.0.
+  Earlier versions may or may not work.
+
+Configuration
+=============
+To configure trac-bzr, you'll have to edit the ``trac.ini`` file of
+your Trac environment.
+
+Required configuration
+----------------------
+After installing, you'll want to set the following values::
+
+  [components]
+  tracbzr.* = enabled
+
+  [trac]
+  repository_type = bzr
+  repository_dir = /path/to/collection/of/bzr/branches
+
+components
+..........
+This should include "``tracbzr.* = enabled``" to enable all features
+provided by the plugin.
+As an alternative, you can enable or disable specific components
+providing specific features, e.g. in order to disable the wiki macro
+provider.
+Use the Trac web admin plugin interface (Trac 0.11 or later) or have a
+look at the sources to find out which components are available.
+
+repository_dir
+..............
+This should point at the directory containing your branches.  This directory
+does not have to be a repository.  trac-bzr doesn't require branches to
+be related, though that is permitted, of course.
+
+repository_type
+...............
+This should be "bzr".
+
+Optional configuration
+----------------------
+There are some optional settings you can configure for trac-bzr.
+If you do not specify them, the following defaults will be used instead::
+
+  [tracbzr]
+  primary_branches = trunk
+  include_sideline_changes = True
+
+primary_branches
+................
+This is a comma-separated ordered list of the main branches of your project.
+You may also specify `glob patterns`_ in this list to match multiple branches.
+
+Note that the pattern must match from the root of repository_dir, so if you
+set it to e.g. a directory containing sub-directories which in turn contain
+branches, you should set primary_branches to ``*/BRANCH``.
+
+The Branches_ wiki macro will list branches in the order specified by this list.
+The timeline view will try to associate changesets with branches in the
+specified order.
+In both cases, branches not matched by any list item will be inserted at the
+end of the list, as if you had ended the list with ``,*``.
+Branches matched by a single list item will be sorted alphabetically.
+
+.. _`glob patterns`: http://docs.python.org/library/fnmatch.html
+
+include_sideline_changes
+........................
+This boolean flag selects whether or not sideline changes, i.e. those
+denoted with dotted revision numbers, are included in the list of all
+changes. This affects the output of the ``get_changesets`` method,
+which in turn influences the events listed in the timeline view.
+
+Note that there might be other plugins using that information as well,
+so there might be other components beside the timeline view that get
+affected by this setting.
+
+Performance
+===========
+
+Some user-level operations are rather slow, because Trac's assumptions
+about which repository operations are cheap vs expensive doesn't match
+Bazaar's design.
+
+Revision numbers
+----------------
+
+One of the problems is the mapping between revision identifiers and
+revision numbers. The `Bazaar Revision Numbering Cache Plugin`__ might
+help for this problem, although it's experimental and hasn't been
+tested with trac-bzr extensively enough. Feedback welcome.
+
+.. __: https://launchpad.net/bzr-revnocache
+
+Last modifications
+------------------
+
+Another problem is that bzr has a different idea about the last
+modification of a directory. In svn, any modifications of directory
+contents is said to modify the dir as well. In bzr, only changes to
+the set of files in a directory are counted.
+
+Investigations are in progress about how to solve this problem,
+probably through the use of caches.
+
+Limitations
+===========
+
+Bogus changesets
+----------------
+This plugin introduces the bogus changeset "current:", which is used as
+the last-revision for directories that are not branches.  It also provides
+"null:", which is part of Bazaar's theoretical model, but usually hidden.
+
+Hidden nested branches
+----------------------
+Because Trac, like Subversion, doesn't differentiate between "source file
+namespace" and "branch namespace", it is impossible to view branches whose
+directories are directly inside other branches' directories.
+
+Revision order
+--------------
+If two changesets are not related to one another by some direct ancestry,
+i.e. if neither one is an ancestor of the other, then revisions are sorted by
+timestamp instead.
+In case of a clock skew this can lead to inconcistent results,
+as transitivity isn't guaranteed for this approach.
+
+Bracket syntax
+--------------
+Trac does not to recognize bzr revision strings in its bracket notation,
+e.g. ``[tree,25]``.
+However, you can use the changeset notation instead, e.g.
+``changeset:tree,25``.
+
+Revision specification format
+-----------------------------
+Since Trac repository queries don't give trac-bzr enough context, revisions
+have to be specified and are presented in the format ``PATH_TO_BRANCH,REV``
+where ``PATH_TO_BRANCH`` is the path to branch (or object within the branch
+like directory or file) relative to repository_dir, with slashes ('/')
+replaced with commas (',').
+
+This is visible when browsing the branches via Trac's source browser and this
+is also what you have to use in TracLinks.
+
+This may be improved in the future when trac-bzr adds_ proper support
+for the multiple repository interfaces added_ in Trac 0.12.
+
+In the meantime, if you have an urgent need to address that and are able
+to spend some time implementing it, have a look at HACKING document for
+possible approaches in Trac 0.11 and below.
+
+.. _adds: https://blueprints.launchpad.net/trac-bzr/+spec/multirepo
+.. _added: http://trac.edgewall.org/wiki/MultipleRepositorySupport
+
+Unsupported download links
+--------------------------
+Using download links in source browser (under "Download in other formats"
+heading) is not supported.  For details see `bug 394204`_, in short this is
+a problem which should be addressed in Trac itself.
+
+In fact an `upstream bug report`_ is already filled in and a patch is
+available, so if you're interested in this feature check it out and discuss
+any issues with it upstream.
+
+.. _`bug 394204`: https://bugs.launchpad.net/trac-bzr/+bug/394204
+.. _`upstream bug report`: http://trac.edgewall.org/ticket/8919
+
+File encoding
+-------------
+Because at the moment Bazaar does not store information about encoding of text 
+files, you may want to change the default character set used by trac. 
+By default trac use encoding iso-8895-15 to show content of your files. 
+If you need to change this option, you need to edit trac.ini of your project. 
+In section "trac" you need to change parameter named "default_charset". E.g. 
+for russian files::
+
+  [trac]
+  default_charset = cp1251
+
+.. cut long_description here
+
+.. vim: ft=rst
+
+.. emacs
+   Local Variables:
+   mode: rst
+   End:
