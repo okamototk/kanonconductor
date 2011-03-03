@@ -1,4 +1,4 @@
 #!/bin/sh
 
-rm -fr resource/plugins/*/dist resource/plugins/*/build resource/plugins/*/*.egg-info
+rm -fr resource/trac-plugins/*/dist resource/trac-plugins/*/build resource/trac-plugins/*/*.egg-info
 find . -name "*.mo"  -exec rm {} \;
