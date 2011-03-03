@@ -180,10 +180,7 @@ then
 elif [ "$REPO_TYPE" = 'git' ]
 then
    git init --bare $KANON_VAR/git/$PROJECT_NAME
-   pushd .  
-   cd $KANON_VAR/git/$PROJECT_NAME
-   git update-server-info  
-   popd
+   git --git-dir=$KANON_VAR/git/$PROJECT_NAME update-server-info  
    cp $KANON_VAR/git/$PROJECT_NAME/hooks/post-update.sample $KANON_VAR/git/$PROJECT_NAME/hooks/post-update
    chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/git/$PROJECT_NAME
 elif [ "$REPO_TYPE" != '' ]
