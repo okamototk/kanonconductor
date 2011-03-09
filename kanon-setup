@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 export KANON_OPT=/opt/kanon
@@ -25,6 +26,7 @@ else
     echo "  * Debian GNU/Linux, GNU/kFreeBSD 6.0"
     echo "  * RedHat Enterprise Linux 6.0"
     echo "  * Oracle Enterprise Linux 6.0"
+    echo "  * CentOS 5.x (Experimental)"
     echo ""
     echo "です。"
     exit
@@ -64,6 +66,8 @@ case $OS in
         yum -y install `cat pkglist.rhel6`
         ;;
     rhel5)
+        rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm
+        yum -y install `cat pkglist.rhel5`
         ;;
     *)
         ;;    
@@ -155,6 +159,21 @@ case $OS in
         service httpd start
         ;;
     rhel5)
+        mkdir -p /var/opt/kanon/trac/.egg-cache
+        chown apache:apache -R /var/opt/kanon/trac/.egg-cache/
+        mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
+        ln -s /usr/lib/python2.4/site-packages/libsvn /opt/kanon/lib/python2.6/site-packages/
+        ln -s /usr/lib/python2.4/site-packages/svn /opt/kanon/lib/python2.6/site-packages/
+
+        cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
+        if [ ! -f /etc/httpd/conf.d/kanon.conf ]
+        then
+            cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
+        fi
+        echo 0 > /selinux/enforce
+        echo "SELinuxが無効化されました"
+        service httpd stop
+        service httpd start
         ;;
     *)
         ;;    
