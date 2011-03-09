@@ -9,8 +9,14 @@ then
     APACHE_USER=www-data
 elif [ -f /etc/redhat-release ]
 then
-    OS='rhel'
     APACHE_USER=apache
+    CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
+    if [ "$CHK" != '' ]
+    then
+        OS='rhel5'    
+    else
+        OS='rhel6'
+    fi
 else
     echo "サポートされていないOSです。"
     echo "現在サポートされいているOSは、"
@@ -49,14 +55,19 @@ then
 fi
 
 ### install ubuntu package 
-if [ "$OS" = 'debian' ]
-then
-    apt-get update
-    apt-get -y install `cat pkglist.debian`
-elif [ "$OS" = 'rhel' ]
-then
-    yum -y install `cat pkglist.rhel`
-fi
+case $OS in
+    debian)
+        apt-get update 
+        apt-get -y install `cat pkglist.debian` 
+        ;;
+    rhel6)
+        yum -y install `cat pkglist.rhel6`
+        ;;
+    rhel5)
+        ;;
+    *)
+        ;;    
+esac
 
 ### install files
 cp -fr opt/* /opt
@@ -64,8 +75,8 @@ cp -frn etc/* /etc
 
 
 ### setup configuration
-export PYTHONPATH=/opt/kanon/lib/python2.6:/opt/kanon/lib/python2.6/site-packages
-cp resource/dot.pydistutils.cfg ~/.pydistutils.cfg
+python resource/virtualenv.py /opt/kanon
+source /opt/kanon/bin/activate
 
 ## setup sitecustomize for python
 if [ -f /etc/python2.6/sitecustomize.py ]
@@ -78,18 +89,18 @@ then
 fi
 
 ### install python components
-easy_install --prefix $KANON_OPT http://svn.edgewall.org/repos/genshi/tags/0.6.0/
-easy_install --prefix $KANON_OPT http://ftp.edgewall.com/pub/babel/Babel-0.9.5.zip
-easy_install --prefix $KANON_OPT http://www.i-act.co.jp/project/products/downloads/Trac-0.12.2.ja1.zip
-easy_install --prefix $KANON_OPT xlrd
-easy_install --prefix $KANON_OPT https://github.com/hvr/trac-git-plugin/zipball/v0.12.0.5
+easy_install http://svn.edgewall.org/repos/genshi/tags/0.6.0/
+easy_install http://ftp.edgewall.com/pub/babel/Babel-0.9.5.zip
+easy_install http://www.i-act.co.jp/project/products/downloads/Trac-0.12.2.ja1.zip
+easy_install xlrd
+easy_install https://github.com/hvr/trac-git-plugin/zipball/v0.12.0.5
 # bzr co lp:trac-bzr /tmp/trac-bzr-install
 #easy_install --prefix /opt/kanon /tmp/trac-bzr-install
 #rm -fr /tmp/trac-bzr-install
 
 
 ### install trac plugins
-easy_install --prefix $KANON_OPT http://svn.edgewall.com/repos/trac/plugins/0.12/mercurial-plugin 
+easy_install http://svn.edgewall.com/repos/trac/plugins/0.12/mercurial-plugin 
 
 #resource/pluginsディレクトリのプラグインをインストール
 pushd .
@@ -117,32 +128,38 @@ popd
 
 
 ### setup apache and restart
-if [ "$OS" = 'debian' ]
-then
-    cp resource/trac_hook.py /usr/lib/python2.6/dist-packages/bzrlib/plugins
-    if [ ! -f /etc/apache2/sites-available/kanon ]
-    then
-        cp resource/httpd.conf /etc/apache2/sites-available/kanon
-    fi
-    a2enmod expires
-    a2enmod auth_digest
-    a2enmod dav_fs
-    a2ensite kanon
-    service apache2 stop
-    service apache2 start
-elif [ "$OS" = 'rhel' ]
-then
-    mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
-    cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
-    if [ ! -f /etc/httpd/conf.d/kanon.conf ]
-    then
-        cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
-    fi
-    echo 0 > /selinux/enforce
-    echo "SELinuxが無効化されました"
-    service httpd stop
-    service httpd start
-fi
+case $OS in
+    debian)
+        cp resource/trac_hook.py /usr/lib/python2.6/dist-packages/bzrlib/plugins
+        if [ ! -f /etc/apache2/sites-available/kanon ]
+        then
+            cp resource/httpd.conf /etc/apache2/sites-available/kanon
+        fi
+        a2enmod expires
+        a2enmod auth_digest
+        a2enmod dav_fs
+        a2ensite kanon
+        service apache2 stop
+        service apache2 start
+        ;;
+    rhel6)
+        mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
+        cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
+        if [ ! -f /etc/httpd/conf.d/kanon.conf ]
+        then
+            cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
+        fi
+        echo 0 > /selinux/enforce
+        echo "SELinuxが無効化されました"
+        service httpd stop
+        service httpd start
+        ;;
+    rhel5)
+        ;;
+    *)
+        ;;    
+esac
+
 
 # データディレクトリが存在しない場合作成
 if [ ! -d "$KANON_VAR/trac" ]
