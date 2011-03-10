@@ -2,12 +2,8 @@ python26
 python26-devel
 python26-mod_wsgi
 httpd
-python-setuptools
-python-pygments
 sqlite
 mod_dav_svn
 subversion
-mercurial
-bzr
 gcc
 git

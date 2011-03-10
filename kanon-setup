@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 export KANON_OPT=/opt/kanon
@@ -14,7 +13,7 @@ then
     CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
     if [ "$CHK" != '' ]
     then
-        OS='rhel5'    
+        OS='rhel5'
     else
         OS='rhel6'
     fi
@@ -66,20 +65,27 @@ case $OS in
         yum -y install `cat pkglist.rhel6`
         ;;
     rhel5)
+        # TODO 環境によっては失敗する模様(proxy環境?)wget してからローカルファイルをインストールに変更する.
         rpm -Uvh http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm
         yum -y install `cat pkglist.rhel5`
         ;;
     *)
-        ;;    
+        ;;
 esac
 
 ### install files
 cp -fr opt/* /opt
-cp -frn etc/* /etc
+if [ "$OS" == "rhel5" ]
+then
+    # FIXME CentOS 5.x では n オプションがないため 強制上書きになってしまう.
+    cp -fr etc/* /etc
+else
+    cp -frn etc/* /etc
+fi
 
 
 ### setup configuration
-python resource/virtualenv.py /opt/kanon
+python2.6 resource/virtualenv.py /opt/kanon
 source /opt/kanon/bin/activate
 
 ## setup sitecustomize for python
@@ -92,7 +98,16 @@ then
     fi
 fi
 
+
 ### install python components
+if [ "$OS" == "rhel5" ]
+then
+    # Install Extra Package for CentOS 5.X
+    easy_install "mercurial==1.7.3"
+    easy_install bzr
+    easy_install pygments
+fi
+
 easy_install http://svn.edgewall.org/repos/genshi/tags/0.6.0/
 easy_install http://ftp.edgewall.com/pub/babel/Babel-0.9.5.zip
 easy_install http://www.i-act.co.jp/project/products/downloads/Trac-0.12.2.ja1.zip
@@ -104,7 +119,7 @@ easy_install https://github.com/hvr/trac-git-plugin/zipball/v0.12.0.5
 
 
 ### install trac plugins
-easy_install http://svn.edgewall.com/repos/trac/plugins/0.12/mercurial-plugin 
+easy_install http://svn.edgewall.com/repos/trac/plugins/0.12/mercurial-plugin
 
 #resource/pluginsディレクトリのプラグインをインストール
 pushd .
@@ -112,8 +127,8 @@ pushd .
 cd resource/trac-plugins
 for i in `ls -1 .`
 do
-    cd $i;python setup.py install --prefix=/opt/kanon
-    cd ..   
+    cd $i;python setup.py install
+    cd ..
 done
 cd ../..
 
@@ -124,7 +139,7 @@ do
     cd /tmp
     svn co $i kanon_build
     cd kanon_build
-    python setup.py install --prefix=/opt/kanon
+    python setup.py install
     cd ..
     rm -fr kanon_build
 done
@@ -162,6 +177,7 @@ case $OS in
         mkdir -p /var/opt/kanon/trac/.egg-cache
         chown apache:apache -R /var/opt/kanon/trac/.egg-cache/
         mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
+        # FIXME only works i386.
         ln -s /usr/lib/python2.4/site-packages/libsvn /opt/kanon/lib/python2.6/site-packages/
         ln -s /usr/lib/python2.4/site-packages/svn /opt/kanon/lib/python2.6/site-packages/
 
@@ -176,7 +192,7 @@ case $OS in
         service httpd start
         ;;
     *)
-        ;;    
+        ;;
 esac
 
 
