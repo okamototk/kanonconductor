@@ -184,5 +184,7 @@ then
     chown $APACHE_USER.$APACHE_USER -R /var/opt/kanon/svn/SampleProject
 fi
 
+chown $APACHE_USER.$APACHE_USER -R /etc/opt/kanon
+    
 echo "Kanon Team Conductorのインストールが完了しました。"
 echo $KANON_OPT"/bin/kanon-create-project コマンドでプロジェクトを作成してください。"
