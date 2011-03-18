@@ -139,6 +139,12 @@ then
         cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
     fi
     echo 0 > /selinux/enforce
+    CHK=`grep SELINUX=enforcing /etc/selinux/config` 
+    if [ ! "$CHK" = '' ]   
+    then
+        cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
+        mv /tmp/selinux_config /etc/selinux/config 
+    fi
     echo "SELinuxが無効化されました"
     service httpd stop
     service httpd start
