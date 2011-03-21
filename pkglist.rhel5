@@ -3,7 +3,4 @@ python26-devel
 python26-mod_wsgi
 httpd
 sqlite
-mod_dav_svn
-subversion
 gcc
-git
