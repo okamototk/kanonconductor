@@ -48,6 +48,32 @@ then
     exit
 fi
 
+### ask install maven
+echo ""
+echo "KanonではJava開発のためのビルドツールとてMavenをインストールして"
+echo "利用することができます。ユーザが個別にインストールしたMavenを利用することもできますが、"
+echo "ここでインストールするとJenkinsのデモを設定なしに利用することができます。"
+echo -n "Mavenをインストールしますか?(y/n) "
+read YN
+
+if [ "$YN" != "y" ]
+then
+    MAVEN=y
+fi
+
+### ask install jenkins
+echo ""
+echo "Kanonは継続的インテグレーションツール(CIツール)として"
+echo "Jenkinsを統合して使うことができます。"
+echo -n "Jenkinsをインストールしますか?(y/n) "
+read YN
+
+if [ "$YN" != "y" ]
+then
+    JENKINS=y
+fi
+
+
 ### install ubuntu package 
 if [ "$OS" = 'debian' ]
 then
@@ -56,6 +82,62 @@ then
 elif [ "$OS" = 'rhel' ]
 then
     yum -y install `cat pkglist.rhel`
+fi
+
+### install jenkins
+if [ "$JENKINS" = 'y' ]
+then
+    if [ "$OS" = 'debian' ]
+    then
+        wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+        CHK=`grep "http://pkg.jenkins-ci.org/debian" /etc/apt/sources.list.d/jenkins.list`
+        if [ "$CHK" = '' ]
+        then
+            echo "deb http://pkg.jenkins-ci.org/debian binary/" > /etc/apt/sources.list.d/jenkins.list
+        fi
+        apt-get update
+        apt-get -y install jenkins openjdk-6-jdk
+        CHK=`grep "/etc/default/jenkins" prefix`
+        if [ "$CHK" = '' ]
+        then
+            cat /etc/default/jenkins |sed 's/JENKINS_ARGS="/JENKINS_ARGS="--prefix=\/jenkins /' > /tmp/jenkins_config
+            mv -f /tmp/jenkins_config /etc/default/jenkins
+        fi
+    elif [ "$OS" = 'rhel' ]
+    then
+        wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+        rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+        yum -y install jenkins
+        CHK=`grep "/etc/sysconfig/jenkins" prefix`
+        if [ "$CHK" = '' ]
+        then
+            cat /etc/sysconfig/jenkins |sed 's/JENKINS_ARGS=""/JENKINS_ARGS="--prefix=\/jenkins"/' > /tmp/jenkins_config
+            mv -f /tmp/jenkins_config /etc/sysconfig/jenkins
+        fi
+    fi
+
+    if [ ! -f /var/jenkins/kanon.install ]    
+    then
+        cp -fr resource/jenkins-config/* /var/lib/jenkins/
+        chown jenkins.nogroup -R /var/lib/jenkins
+    fi
+fi
+
+### install apache maven
+if [ "$MAVEN" = 'y' ]
+then
+    wget -O /tmp/maven.tgz http://ftp.riken.jp/net/apache//maven/binaries/apache-maven-3.0.3-bin.tar.gz
+    pushd .
+    cd /tmp
+    tar zxf maven.tgz
+    if [ ! -d /opt/maven ]
+    then
+        mkdir /opt/maven
+    fi
+    
+    mv -f apache-maven-3.?.?/* /opt/maven/
+
+    popd 
 fi
 
 ### install files
@@ -143,7 +225,7 @@ then
     if [ ! "$CHK" = '' ]   
     then
         cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
-        mv /tmp/selinux_config /etc/selinux/config 
+        mv -f /tmp/selinux_config /etc/selinux/config 
     fi
     echo "SELinuxが無効化されました"
     service httpd stop
