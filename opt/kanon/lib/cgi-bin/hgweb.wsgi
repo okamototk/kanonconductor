@@ -5,6 +5,9 @@
 config = "/etc/opt/kanon/hgweb.config"
 
 import os
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 os.environ["HGENCODING"] = "UTF-8"
 
 # Uncomment and adjust if Mercurial is not installed system-wide:

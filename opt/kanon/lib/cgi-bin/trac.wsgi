@@ -15,6 +15,9 @@
 #
 # Author: Noah Kantrowitz <noah@coderanger.net>
 import os
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 def application(environ, start_request):
     if not 'trac.env_parent_dir' in environ:
