@@ -65,38 +65,11 @@ case $OS in
         yum -y install `cat pkglist.rhel6`
         ;;
     rhel5)
-        # Upgrade Subversion.
-        # FIXME もっといい文言を頼む.
-        echo ""
-        echo ""
-        echo "KanonでのSubversionの利用について"
-        echo "CentOS 5.x でSubversion連携を動作させるには、"
-        echo "Python 2.6用の Subversionバインディングのインストールが必要となります。"
-        echo "CentOS 5.x ではパッケージが提供されていないため、"
-        echo "そのままではSubversion連携を動かすことができません。"
-        echo "Kanonでは、最新のSubversion 1.6をインストールするオプションを提供します。"
-        echo "インストールした場合システムに対し下記の影響があります。"
-        echo " * CentOS 5.x 標準の subversion, mod_dav_svnパッケージの削除"
-        echo " * /opt/kanon を prefixとしてSubversion 1.6のファイルを配置"
-        echo " * /etc/yum.conf に exclude=subversion, mod_dav_svn の設定を追記"
-        echo " * Apache モジュールのインストール"
-        echo "   /usr/lib64/httpd/modules/mod_authz_svn.so"
-        echo "   /usr/lib64/httpd/modules/mod_dav_svn.so"
-        echo "   or"
-        echo "   /usr/lib/httpd/modules/mod_authz_svn.so"
-        echo "   /usr/lib/httpd/modules/mod_dav_svn.so"
-        echo " * Apacheの設定ファイルにモジュールのロードを行う設定の追記"
-        echo "   LoadModule dav_svn_module     /usr/lib64/httpd/modules/mod_dav_svn.so"
-        echo "   LoadModule authz_svn_module   /usr/lib64/httpd/modules/mod_authz_svn.so"
-        echo "   or"
-        echo "   LoadModule dav_svn_module     /usr/lib/httpd/modules/mod_dav_svn.so"
-        echo "   LoadModule authz_svn_module   /usr/lib/httpd/modules/mod_authz_svn.so"
-        echo "アップグレードしたSubversionをアンインストールする場合は、"
-        echo "subversion-16-uninstall.sh を使用してください。"
-        echo ""
-        echo -n "Subversionをアップグレードする?(y/n) "
-        read UPGRADE_SVN
-
+        # TODO
+        # アップグレードしたパッケージのリポジトリの設定(http://kanon.ultimania.org/pkg/centos5)と
+        #   yum -y install subversion-1.6.15-1.el5の
+        #   yum -y install mod_dav_svn-1.6.15-1.el5
+        # の実行
         # Add EPEL Repositories. For python26, python26-devel, python26-mod_wsgi.
         EPEL_RPM_URL="http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
         wget $EPEL_RPM_URL
