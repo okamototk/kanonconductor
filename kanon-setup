@@ -225,6 +225,7 @@ case $OS in
         fi
         echo 0 > /selinux/enforce
         echo "SELinuxが無効化されました"
+        mv /etc/httpd/conf.d/python.conf /etc/httpd/conf.d/python.conf.disabled
         service httpd stop
         service httpd start
         ;;
