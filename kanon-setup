@@ -65,10 +65,9 @@ case $OS in
         yum -y install `cat pkglist.rhel6`
         ;;
     rhel5)
-        # TODO
-        # アップグレードしたパッケージのリポジトリの設定(http://kanon.ultimania.org/pkg/centos5)と
-        #   yum -y install subversion-1.6.15-1.el5の
-        #   yum -y install mod_dav_svn-1.6.15-1.el5
+        cp -f resource/kanon.repo /etc/yum.repos.d/kanon.repo
+        yum -y install subversion-1.6.15-1.el5
+        yum -y install mod_dav_svn-1.6.15-1.el5
         # の実行
         # Add EPEL Repositories. For python26, python26-devel, python26-mod_wsgi.
         EPEL_RPM_URL="http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
