@@ -65,16 +65,16 @@ case $OS in
         yum -y install `cat pkglist.rhel6`
         ;;
     rhel5)
-        cp -f resource/kanon.repo /etc/yum.repos.d/kanon.repo
-        yum -y install subversion-1.6.15-1.el5
-        yum -y install mod_dav_svn-1.6.15-1.el5
-        # の実行
-        # Add EPEL Repositories. For python26, python26-devel, python26-mod_wsgi.
+        # Add EPEL Repository. For python26, python26-devel, python26-mod_wsgi.
         EPEL_RPM_URL="http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
         wget $EPEL_RPM_URL
         rpm -Uvh epel-release-5-4.noarch.rpm
         rm -f epel-release-5-4.noarch.rpm
         yum -y install `cat pkglist.rhel5`
+
+        # Add Kanon Repository. For Subversion 1.6 with Python26.
+        cp -f resource/kanon.repo /etc/yum.repos.d/kanon.repo
+        yum -y install subversion-1.6.15 mod_dav_svn-1.6.15
         ;;
     *)
         ;;
@@ -108,13 +108,6 @@ fi
 
 if [ "$OS" = "rhel5" ]
 then
-    # Install Subversion.
-    if [ "$UPGRADE_SVN" = "y" ]
-    then
-        ./subversion-16-upgrade.sh
-    else
-        yum -y install subversion mod_dav_svn
-    fi
     # Install Extra Package for CentOS 5.X
     easy_install "mercurial==1.7.3"
     easy_install bzr
