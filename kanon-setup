@@ -153,40 +153,6 @@ popd
 
 
 ### setup apache and restart
-<<<<<<< local
-if [ "$OS" = 'debian' ]
-then
-    cp resource/trac_hook.py /usr/lib/python2.6/dist-packages/bzrlib/plugins
-    if [ ! -f /etc/apache2/sites-available/kanon ]
-    then
-        cp resource/httpd.conf /etc/apache2/sites-available/kanon
-    fi
-    a2enmod expires
-    a2enmod auth_digest
-    a2enmod dav_fs
-    a2ensite kanon
-    service apache2 stop
-    service apache2 start
-elif [ "$OS" = 'rhel' ]
-then
-    mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
-    cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
-    if [ ! -f /etc/httpd/conf.d/kanon.conf ]
-    then
-        cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
-    fi
-    echo 0 > /selinux/enforce
-    CHK=`grep SELINUX=enforcing /etc/selinux/config` 
-    if [ ! "$CHK" = '' ]   
-    then
-        cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
-        mv /tmp/selinux_config /etc/selinux/config 
-    fi
-    echo "SELinuxが無効化されました"
-    service httpd stop
-    service httpd start
-fi
-=======
 case $OS in
     debian)
         cp resource/trac_hook.py /usr/lib/python2.6/dist-packages/bzrlib/plugins
@@ -209,6 +175,12 @@ case $OS in
             cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
         fi
         echo 0 > /selinux/enforce
+        CHK=`grep SELINUX=enforcing /etc/selinux/config` 
+        if [ ! "$CHK" = '' ]   
+        then
+            cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
+            mv /tmp/selinux_config /etc/selinux/config 
+        fi
         echo "SELinuxが無効化されました"
         service httpd stop
         service httpd start
@@ -223,6 +195,12 @@ case $OS in
             cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
         fi
         echo 0 > /selinux/enforce
+        CHK=`grep SELINUX=enforcing /etc/selinux/config` 
+        if [ ! "$CHK" = '' ]   
+        then
+            cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
+            mv /tmp/selinux_config /etc/selinux/config 
+        fi
         echo "SELinuxが無効化されました"
         mv /etc/httpd/conf.d/python.conf /etc/httpd/conf.d/python.conf.disabled
         service httpd stop
@@ -232,7 +210,6 @@ case $OS in
         ;;
 esac
 
->>>>>>> other
 
 # データディレクトリが存在しない場合作成
 if [ ! -d "$KANON_VAR/trac" ]
