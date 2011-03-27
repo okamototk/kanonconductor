@@ -120,7 +120,7 @@ INSERT INTO report VALUES(19,'trac',"バックログの確認(チーム別)",
       ELSE 
         (CASE tt.owner WHEN $USER THEN 'font-weight: bold' END)
     END) AS __style__,
-  t.milestone AS __group__,
+  tt.milestone AS __group__,
   t.id AS id,
   '' AS 'ストーリー',
   tt.id AS ticket,
@@ -138,7 +138,7 @@ FROM ticket t
   LEFT JOIN ticket_custom th ON th.ticket = tt.id AND th.name = 'totalhours'
   LEFT JOIN ticket_custom peh ON peh.ticket = t.id AND peh.name = 'estimatedhours'
   LEFT JOIN ticket_custom pth ON pth.ticket = t.id AND pth.name = 'totalhours'
-WHERE t.type='ストーリー' AND t.component=$TEAM AND st.child IS NOT NULL AND t.status <> 'closed'
+WHERE t.component=$TEAM AND t.type='ストーリー'  AND st.child IS NOT NULL AND t.status <> 'closed' 
 
 UNION
 
@@ -156,7 +156,7 @@ SELECT
   '',
   '[/newticket?type=タスク&parents='||t.id||'&milestone='||t.milestone||' タスク作成]' AS  description
 FROM ticket t
-WHERE t.type='ストーリー' AND t.component=$TEAM AND t.status<>'closed'
+WHERE t.component=$TEAM AND t.type='ストーリー' AND t.status<>'closed'
 
 UNION
 
@@ -169,7 +169,7 @@ SELECT
     END) AS __style__,
   t.milestone AS __group__,
   '-' AS id,
-  'その他' AS 'ストーリー',
+  'その他:' ||t.type AS 'ストーリー',
   t.id AS ticket,
   t.summary as 'タスク',
   t.owner AS '担当者', 
@@ -180,8 +180,9 @@ SELECT
 FROM ticket as t
   LEFT JOIN ticket_custom eh ON eh.ticket = t.id AND eh.name = 'estimatedhours'
   LEFT JOIN ticket_custom th ON th.ticket = t.id AND th.name = 'totalhours'
-WHERE t.type NOT IN ('ストーリー') AND t.component=$TEAM  AND
-  (SELECT count(*)==0 from subtickets WHERE subtickets.child = t.id)
+WHERE t.component=$TEAM AND NOT t.type IN ('ストーリー')  AND
+  NOT EXISTS (SELECT * from subtickets WHERE subtickets.child = t.id)
+
 ORDER BY __group__ DESC, id,ticket DESC","
  * チーム別のスプリントのストーリー(プロダクトバックログ)とタスク(スプリントバックログ)を確認することができます。
  * {{{[report:19?TEAM=チームA チームAのバックログ]}}}のように、レポートのリンク、もしくはURLの最後にTEAM変数でチーム名を指定して利用します。
