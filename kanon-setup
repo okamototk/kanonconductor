@@ -109,40 +109,47 @@ esac
 ### install jenkins
 if [ "$JENKINS" = 'y' ]
 then
-    if [ "$OS" = 'debian' ]
-    then
-        wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
-        CHK=`grep "http://pkg.jenkins-ci.org/debian" /etc/apt/sources.list.d/jenkins.list`
-        if [ "$CHK" = '' ]
-        then
-            echo "deb http://pkg.jenkins-ci.org/debian binary/" > /etc/apt/sources.list.d/jenkins.list
-        fi
-        apt-get update
-        apt-get -y install jenkins openjdk-6-jdk
-        CHK=`grep "/etc/default/jenkins" prefix`
-        if [ "$CHK" = '' ]
-        then
-            cat /etc/default/jenkins |sed 's/JENKINS_ARGS="/JENKINS_ARGS="--prefix=\/jenkins /' > /tmp/jenkins_config
-            mv -f /tmp/jenkins_config /etc/default/jenkins
-        fi
-    elif [ "$OS" = 'rhel' ]
-    then
-        wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
-        rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-        yum -y install jenkins
-        CHK=`grep "/etc/sysconfig/jenkins" prefix`
-        if [ "$CHK" = '' ]
-        then
-            cat /etc/sysconfig/jenkins |sed 's/JENKINS_ARGS=""/JENKINS_ARGS="--prefix=\/jenkins"/' > /tmp/jenkins_config
-            mv -f /tmp/jenkins_config /etc/sysconfig/jenkins
-        fi
-    fi
+    case $OS in
+        debian)
+            wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+            CHK=`grep "http://pkg.jenkins-ci.org/debian" /etc/apt/sources.list.d/jenkins.list`
+            if [ "$CHK" = '' ]
+            then
+                echo "deb http://pkg.jenkins-ci.org/debian binary/" > /etc/apt/sources.list.d/jenkins.list
+            fi
+            apt-get update
+            apt-get -y install jenkins openjdk-6-jdk
+            CHK=`grep "/etc/default/jenkins" prefix`
+            if [ "$CHK" = '' ]
+            then
+                cat /etc/default/jenkins |sed 's/JENKINS_ARGS="/JENKINS_ARGS="--prefix=\/jenkins /' > /tmp/jenkins_config
+                mv -f /tmp/jenkins_config /etc/default/jenkins
+            fi
+            JENKINS_OWN=jenkins.nogroup
+            ;;
+        rhel5|rhel6)
+            wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+            rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+            yum -y install jenkins
+            CHK=`grep "/etc/sysconfig/jenkins" prefix`
+            if [ "$CHK" = '' ]
+            then
+                cat /etc/sysconfig/jenkins |sed 's/JENKINS_ARGS=""/JENKINS_ARGS="--prefix=\/jenkins"/' > /tmp/jenkins_config
+                mv -f /tmp/jenkins_config /etc/sysconfig/jenkins
+            fi
+            JENKINS_OWN=jenkins.jenkins
+            ;;
+        *)
+            ;;
+    esac
 
     if [ ! -f /var/jenkins/kanon.install ]    
     then
         cp -fr resource/jenkins-config/* /var/lib/jenkins/
-        chown jenkins.nogroup -R /var/lib/jenkins
+        chown $JENKINS_OWN -R /var/lib/jenkins
     fi
+    
+    service jenkins restart
 fi
 
 ### install apache maven
@@ -249,7 +256,12 @@ case $OS in
         service apache2 stop
         service apache2 start
         ;;
-    rhel6)
+    rhel5|rhel6)
+        if [ $OS = 'rhel5' ]
+        then
+            mkdir -p /var/opt/kanon/trac/.egg-cache
+            chown $APACHE_USER:$APACHE_USER -R /var/opt/kanon/trac/.egg-cache/
+        fi
         mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
         cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
         if [ ! -f /etc/httpd/conf.d/kanon.conf ]
@@ -264,27 +276,6 @@ case $OS in
             mv /tmp/selinux_config /etc/selinux/config 
         fi
         echo "SELinuxが無効化されました"
-        service httpd stop
-        service httpd start
-        ;;
-    rhel5)
-        mkdir -p /var/opt/kanon/trac/.egg-cache
-        chown $APACHE_USER:$APACHE_USER -R /var/opt/kanon/trac/.egg-cache/
-        mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
-        cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
-        if [ ! -f /etc/httpd/conf.d/kanon.conf ]
-        then
-            cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
-        fi
-        echo 0 > /selinux/enforce
-        CHK=`grep SELINUX=enforcing /etc/selinux/config` 
-        if [ ! "$CHK" = '' ]   
-        then
-            cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
-            mv /tmp/selinux_config /etc/selinux/config 
-        fi
-        echo "SELinuxが無効化されました"
-        mv /etc/httpd/conf.d/python.conf /etc/httpd/conf.d/python.conf.disabled
         service httpd stop
         service httpd start
         ;;
