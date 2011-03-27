@@ -1,41 +1,75 @@
 package org.ultimania;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.ultimania.SampleLib.LangType;
+
+import static org.junit.Assert.*;
 
 /**
- * Unit test for simple SampleLibTest.
+ * SampleLibのテストクラス
  */
-public class SampleLibTest extends TestCase {
+public class SampleLibTest {
+
 	/**
-	 * Create the test case
-	 * 
-	 * @param testName
-	 *            name of the test case
+	 * このクラスの全てのテストを実行する前の処理
 	 */
-	public SampleLibTest(String testName) {
-		super(testName);
+	@BeforeClass
+	public static void doBeforeTests() {
+		// 全てのテストを実行する前に一度だけ実行する処理を記述
+		// DBの初期化やテストによって内容が変わる可能性があるファイルの
+		// 初期化処理などを記述
 	}
 
 	/**
-	 * @return the suite of tests being tested
+	 * コンストラクタ。各テスト前の処理を記述。
 	 */
-	public static Test suite() {
-		return new TestSuite(SampleLibTest.class);
+	public SampleLibTest() {
+		// 各テスト毎にインスタンスが生成される。
+		// 各テスト毎の処理を記述
 	}
 
 	/**
-	 * Rigourous Test :-)
+	 * 各テスト後の処理
 	 */
-	public void testDetectLangType() {
-		System.out.println(
-				"==========\n"
-				+ java.util.ResourceBundle.getBundle("msg").getString("message")
-				+"\n==========\n");
+	@After
+	public void postProcess() {
+		// 各テスト後の処理を記述する。
+	}
+
+	@Test
+	public void pythonTest() {
 		SampleLib lib = new SampleLib();
-		assertEquals(lib.detectLangType("ruby"), SampleLib.RUBY);
-		assertEquals(lib.detectLangType("pyton"), SampleLib.PYTHON);
-		assertEquals(lib.detectLangType("perl"), SampleLib.PERL);
+		assertEquals(LangType.PYTHON, lib.detectLangType("python"));
 	}
+
+	@Test
+	public void rubyTest() {
+		SampleLib lib = new SampleLib();
+		assertEquals(LangType.RUBY, lib.detectLangType("ruby"));
+	}
+
+	@Test
+	public void perlTest() {
+		SampleLib lib = new SampleLib();
+		assertEquals(LangType.PERL, lib.detectLangType("perl"));
+	}
+
+	@Test
+	public void otherTest() {
+		SampleLib lib = new SampleLib();
+		assertEquals(LangType.UNKNOWN, lib.detectLangType("scala"));
+	}
+
+	/**
+	 * このクラスの全てのテストを実行した後の処理
+	 */
+	@AfterClass
+	public static void doAfterTests() {
+		// このクラスの全てのテストの実行が終わったあとにする処理を記述。
+		// 変更したDBの削除やゴミファイルの削除などを記述する
+	}
+
 }

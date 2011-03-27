@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="Windows-31J"?>
+<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- ‚±‚±‚ðƒJƒXƒ^ƒ}ƒCƒY -->
+  <!-- ã“ã“ã‚’ã‚«ã‚¹ã‚¿ãƒžã‚¤ã‚º -->
   <name>LibraryProject</name>
   <groupId>com.example</groupId>
   <artifactId>library</artifactId>
@@ -16,53 +16,48 @@
 
   <packaging>jar</packaging>
 
-  <!-- Maven‚ÌƒŠƒ|ƒWƒgƒŠ‚ÌÝ’è -->
+  <properties>
+    <project.build.sourceEncoding>Windows-31J</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <!-- Mavenã®ãƒªãƒã‚¸ãƒˆãƒªã®è¨­å®š -->
   <repositories>
     <repository>
       <id>example.com</id>
       <name>My Maven Repository</name>
-      <!-- localhost ‚ð‚±‚ÌƒT[ƒo‚ÌƒzƒXƒg–¼‚É’uŠ· -->
+      <!-- localhost ã‚’ã“ã®ã‚µãƒ¼ãƒã®ãƒ›ã‚¹ãƒˆåã«ç½®æ› -->
       <url>http://localhost/maven/</url>
       <layout>default</layout>	  
     </repository>
   </repositories>
 
-  <!-- ”z•zæ‚ÌÝ’è -->
+  <!-- é…å¸ƒå…ˆã®è¨­å®š -->
   <distributionManagement>
     <repository>
       <id>local-repository</id>
-      <url>file:///var/www/maven</url>
+      <url>/var/opt/kanon/maven</url>
     </repository>
     <site>
       <id>maven.apache.org</id>
-      <url>file:///var/www/report/SampleProject/LibraryProject</url>
+      <url>/var/opt/kanon/report/SampleProject/LibraryProject</url>
     </site>
   </distributionManagement>
 
-  <!-- SVN‚ÌÝ’è -->
+  <!-- SVNã®è¨­å®š -->
   <scm>
-    <!-- connection,developerConnection,url‚Ì localhost ‚ð‚±‚ÌƒT[ƒo‚ÌƒzƒXƒg–¼‚É’uŠ· -->
+    <!-- connection,developerConnection,urlã® localhost ã‚’ã“ã®ã‚µãƒ¼ãƒã®ãƒ›ã‚¹ãƒˆåã«ç½®æ› -->
     <connection>scm:svn:http://localhost/svn/SampleProject/LibraryProject/trunk/</connection>
     <developerConnection>scm:svn:http://localhost/svn/SampleProject/LibraryProject/trunk/</developerConnection>
     <url>http://localhost/svn/SampleProject/LibraryProject/</url>
   </scm>
 
-  <!-- CI‚ÌÝ’è -->
+  <!-- CIã®è¨­å®š -->
   <ciManagement>
     <system>jenkins</system>
-<!-- 
-    <notifiers>
-      <notifier>
-        <type>mail</type>
-        <configuration>
-          <address>dev-ml@example.com</address>
-        </configuration>
-      </notifier>
-    </notifiers>
--->
   </ciManagement>
 
-  <!-- ŠJ”­ŽÒ‚ÌƒŠƒXƒg‚ð‹Lq(È—ª‰Â”\) -->
+  <!-- é–‹ç™ºè€…ã®ãƒªã‚¹ãƒˆã‚’è¨˜è¿°(çœç•¥å¯èƒ½) -->
   <developers>
     <developer>
       <name>Takashi Okamoto</name>
@@ -74,108 +69,85 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
-  <reporting>
-    <plugins>
-
-      <!-- siteƒvƒ‰ƒOƒCƒ“‚Ìo—ÍÝ’è -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <inputEncoding>Windows-31J</inputEncoding>
-          <outputEncoding>UTF-8</outputEncoding>
-          <locales>ja</locales>
-        </configuration>
-      </plugin>
-
-      <!-- javadoc‚Ìo—Í -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <encoding>Windows-31J</encoding>
-          <docencoding>UTF-8</docencoding>
-        </configuration>
-      </plugin>
-
-      <!-- CheckStyle‚ÌƒŒƒ|[ƒgo—Í -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-
-      <!-- FindBugs‚ÌƒŒƒ|[ƒgo—Í -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-      </plugin>
-
-      <!-- PMD‚ÌƒŒƒ|[ƒgo—Í -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-      </plugin>
-
-      <!-- ƒJƒoƒŒƒbƒW‚Ìo—Í -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <configuration>
-          <sourceEncoding>Windows-31J</sourceEncoding>
-        </configuration>
-      </plugin>
-
-      <!-- ƒƒgƒŠƒbƒNƒX‚Ìo—Í -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jdepend-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javancss-maven-plugin</artifactId>
-      </plugin>
-
-      <!-- ƒNƒƒXƒŠƒtƒ@ƒŒƒ“ƒX -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-	  <inputEncoding>Windows-31J</inputEncoding>
-	  <outputEncoding>UTF-8</outputEncoding>
-        </configuration>
-      </plugin>
-
-      <!-- ƒeƒXƒgƒŒƒ|[ƒg‚ÌÝ’è -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
-      </plugin>
-
-    </plugins>
-  </reporting>
-
   <build>
     <plugins>
 
-      <!-- JavaƒRƒ“ƒpƒCƒ‰‚ÌÝ’è -->
+      <!-- Javaã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã®è¨­å®š -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
+          <source>1.5</source>
+          <target>1.5</target>
           <encoding>Windows-31J</encoding>
         </configuration>
       </plugin>
 
+      <!-- ãƒ¬ãƒãƒ¼ãƒ†ã‚£ãƒ³ã‚°ã®è¨­å®š -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-site-plugin</artifactId>
+	<version>3.0-beta-2</version>
+	<configuration>
+          <locales>ja</locales>
+	  <reportPlugins>
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-javadoc-plugin</artifactId>
+	      <version>2.7</version>
+	    </plugin>
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-jxr-plugin</artifactId>
+	      <version>2.1</version>
+	      <configuration>
+		<aggregate>true</aggregate>
+		<charset>${project.reporting.outputEncoding}</charset>
+	        <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+		<outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
+	      </configuration>
+	    </plugin>
+	    <!--ãƒ†ã‚¹ãƒˆãƒ¬ãƒãƒ¼ãƒˆã‚’å‡ºåŠ›ã€‚
+	       emmaãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’åˆ©ç”¨ã—ã¦ã„ã‚‹å ´åˆã¯emmaã§ãƒ†ã‚¹ãƒˆãƒ¬ãƒãƒ¼ãƒˆã‚’ä½œæˆã—ã¦ãã‚Œã‚‹ã®ã§ç„¡åŠ¹ã«ã™ã‚‹ã€‚
+	       <plugin>
+		 <groupId>org.apache.maven.plugins</groupId>
+		 <artifactId>maven-surefire-report-plugin</artifactId>
+		 <version>2.7.2</version>
+	       </plugin>
+	       -->
+	    <plugin>
+	      <groupId>org.codehaus.mojo</groupId>
+	      <artifactId>emma-maven-plugin</artifactId>
+	      <version>1.0-alpha-3</version>
+	    </plugin>
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-checkstyle-plugin</artifactId>
+	      <version>2.6</version>
+	      <configuration>
+                <configLocation>src/conf/sun_checks_eclipse.xml</configLocation>
+	      </configuration>
+	    </plugin>
+	    <plugin>
+	      <groupId>org.codehaus.mojo</groupId>
+	      <artifactId>findbugs-maven-plugin</artifactId>
+	      <version>2.3.1</version>
+	    </plugin>
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-pmd-plugin</artifactId>
+	      <version>2.5</version>
+	    </plugin>
+	  </reportPlugins>
+	</configuration>
+      </plugin>
+
     </plugins>
- </build>
+  </build>
 
 </project>
