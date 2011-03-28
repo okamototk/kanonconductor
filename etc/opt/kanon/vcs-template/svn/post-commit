@@ -1,7 +1,5 @@
 #!/bin/sh
 
-PROJECT=test2
-
 REPOS="$1"
 REV="$2"
 
