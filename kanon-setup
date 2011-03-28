@@ -166,7 +166,8 @@ then
         mkdir /opt/maven
     fi
     
-    mv -f apache-maven-3.?.?/* /opt/maven/
+    cp -fr apache-maven-3.?.?/* /opt/maven/
+    rm -fr apache-maven-3.?.?
 
     popd 
 fi
