@@ -7,6 +7,7 @@ if [ -f /etc/debian_version ]
 then
     OS='debian'
     APACHE_USER=www-data
+    echo "Debian / Ubuntu が検出されました。"
 elif [ -f /etc/redhat-release ]
 then
     APACHE_USER=apache
@@ -14,8 +15,10 @@ then
     if [ "$CHK" != '' ]
     then
         OS='rhel5'
+        echo "RHEL 5.x / CentOS 5.x / OEL 5.xが検出されました。"
     else
         OS='rhel6'
+        echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"        
     fi
 else
     echo "サポートされていないOSです。"
@@ -55,6 +58,32 @@ then
     exit
 fi
 
+### ask install maven
+echo ""
+echo "KanonではJava開発のためのビルドツールとてMavenをインストールして"
+echo "利用することができます。ユーザが個別にインストールしたMavenを利用することもできますが、"
+echo "ここでインストールするとJenkinsのデモを設定なしに利用することができます。"
+echo -n "Mavenをインストールしますか?(y/n) "
+read YN
+
+if [ "$YN" = "y" ]
+then
+    MAVEN=y
+fi
+
+### ask install jenkins
+echo ""
+echo "Kanonは継続的インテグレーションツール(CIツール)として"
+echo "Jenkinsを統合して使うことができます。"
+echo -n "Jenkinsをインストールしますか?(y/n) "
+read YN
+
+if [ "$YN" = "y" ]
+then
+    JENKINS=y
+fi
+
+
 ### install ubuntu package 
 case $OS in
     debian)
@@ -79,6 +108,69 @@ case $OS in
     *)
         ;;
 esac
+
+### install jenkins
+if [ "$JENKINS" = 'y' ]
+then
+    case $OS in
+        debian)
+            wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+            CHK=`grep "http://pkg.jenkins-ci.org/debian" /etc/apt/sources.list.d/jenkins.list`
+            if [ "$CHK" = '' ]
+            then
+                echo "deb http://pkg.jenkins-ci.org/debian binary/" > /etc/apt/sources.list.d/jenkins.list
+            fi
+            apt-get update
+            apt-get -y install jenkins openjdk-6-jdk
+            CHK=`grep prefix "/etc/default/jenkins"`
+            if [ "$CHK" = '' ]
+            then
+                cat /etc/default/jenkins |sed 's/JENKINS_ARGS="/JENKINS_ARGS="--prefix=\/jenkins /' > /tmp/jenkins_config
+                mv -f /tmp/jenkins_config /etc/default/jenkins
+            fi
+            JENKINS_OWN=jenkins.nogroup
+            ;;
+        rhel5|rhel6)
+            wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+            yum -y --nogpgcheck install jenkins
+            CHK=`grep prefix "/etc/sysconfig/jenkins"`
+            if [ "$CHK" = '' ]
+            then
+                cat /etc/sysconfig/jenkins |sed 's/JENKINS_ARGS=""/JENKINS_ARGS="--prefix=\/jenkins"/' > /tmp/jenkins_config
+                mv -f /tmp/jenkins_config /etc/sysconfig/jenkins
+            fi
+            JENKINS_OWN=jenkins.jenkins
+            ;;
+        *)
+            ;;
+    esac
+
+    if [ ! -f /var/jenkins/kanon.install ]    
+    then
+        cp -fr resource/jenkins-config/* /var/lib/jenkins/
+        chown $JENKINS_OWN -R /var/lib/jenkins
+    fi
+    
+    service jenkins restart
+fi
+
+### install apache maven
+if [ "$MAVEN" = 'y' ]
+then
+    wget -O /tmp/maven.tgz http://ftp.riken.jp/net/apache//maven/binaries/apache-maven-3.0.3-bin.tar.gz
+    pushd .
+    cd /tmp
+    tar zxf maven.tgz
+    if [ ! -d /opt/maven ]
+    then
+        mkdir /opt/maven
+    fi
+    
+    cp -fr apache-maven-3.?.?/* /opt/maven/
+    rm -fr apache-maven-3.?.?
+
+    popd 
+fi
 
 ### install files
 cp -fr opt/* /opt
@@ -119,9 +211,9 @@ easy_install http://ftp.edgewall.com/pub/babel/Babel-0.9.5.zip
 easy_install http://www.i-act.co.jp/project/products/downloads/Trac-0.12.2.ja1.zip
 easy_install xlrd
 easy_install https://github.com/hvr/trac-git-plugin/zipball/v0.12.0.5
-# bzr co lp:trac-bzr /tmp/trac-bzr-install
-#easy_install --prefix /opt/kanon /tmp/trac-bzr-install
-#rm -fr /tmp/trac-bzr-install
+bzr co lp:trac-bzr /tmp/trac-bzr-install
+easy_install /tmp/trac-bzr-install
+rm -fr /tmp/trac-bzr-install
 
 
 ### install trac plugins
@@ -167,7 +259,12 @@ case $OS in
         service apache2 stop
         service apache2 start
         ;;
-    rhel6)
+    rhel5|rhel6)
+        if [ $OS = 'rhel5' ]
+        then
+            mkdir -p /var/opt/kanon/trac/.egg-cache
+            chown $APACHE_USER:$APACHE_USER -R /var/opt/kanon/trac/.egg-cache/
+        fi
         mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
         cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
         if [ ! -f /etc/httpd/conf.d/kanon.conf ]
@@ -182,27 +279,6 @@ case $OS in
             mv /tmp/selinux_config /etc/selinux/config 
         fi
         echo "SELinuxが無効化されました"
-        service httpd stop
-        service httpd start
-        ;;
-    rhel5)
-        mkdir -p /var/opt/kanon/trac/.egg-cache
-        chown $APACHE_USER:$APACHE_USER -R /var/opt/kanon/trac/.egg-cache/
-        mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
-        cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
-        if [ ! -f /etc/httpd/conf.d/kanon.conf ]
-        then
-            cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
-        fi
-        echo 0 > /selinux/enforce
-        CHK=`grep SELINUX=enforcing /etc/selinux/config` 
-        if [ ! "$CHK" = '' ]   
-        then
-            cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
-            mv /tmp/selinux_config /etc/selinux/config 
-        fi
-        echo "SELinuxが無効化されました"
-        mv /etc/httpd/conf.d/python.conf /etc/httpd/conf.d/python.conf.disabled
         service httpd stop
         service httpd start
         ;;
