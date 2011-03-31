@@ -316,7 +316,7 @@ fi
 # setup SampleProject
 if [ ! -d "$KANON_VAR/trac/SampleProject" ]
 then
-    /opt/kanon/bin/kanon-create-project SampleProject svn default
+    /opt/kanon/bin/kanon-create-project SampleProject svn default y
     svn import SampleProject file:///var/opt/kanon/svn/SampleProject/ -m "initial import."
     chown $APACHE_USER.$APACHE_USER -R /var/opt/kanon/svn/SampleProject
 fi

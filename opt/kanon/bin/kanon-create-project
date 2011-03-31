@@ -9,6 +9,7 @@ KANON_VAR=/var/opt/kanon
 PROJECT_NAME=$1
 REPO_TYPE=$2
 TEMPLATE=$3
+JENKINS=$4
 
 export PYTHONPATH=$KANON_HOME/lib/python2.6:$KANON_HOME/lib/python2.6/site-packages
 export PATH=$KANON_HOME/bin:$PATH
@@ -141,9 +142,20 @@ then
   exit
 fi
 
+if [ "$JENKINS" == '' ]
+then
+    echo -n "
+Kanonは継続的インテグレーションツールとしてJenkinsを統合して利用することができま
+す。
+
+継続的インテグレーションを利用しますか?(y/n): "
+    read JENKINS
+fi
+
 echo "プロジェクト名:   " $PROJECT_NAME
 echo "リポジトリタイプ: " $REPO_TYPE
 echo "テンプレート:     " $TEMPLATE
+echo "CIツールの利用:   " $JENKINS
 
 if [ "$3" = '' ]
 then
@@ -228,6 +240,15 @@ file = "$KANON_CONFIG"/trac-template/"$TEMPLATE"/trac.ini
 grep -v 'authz_* = ' $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini > /tmp/$PROJECT_NAME_trac.ini
 mv /tmp/$PROJECT_NAME_trac.ini $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
 
+# HudsonTracPlugPluginを有効化
+if [ "$JENKINS" = 'y' ]
+then
+    echo "
+[components]
+hudsontracplus.hudsontracplusplugin.hudsontracplusplugin = enabled
+" >> $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini 
+fi
+
 trac-admin $KANON_VAR/trac/$PROJECT_NAME upgrade
 trac-admin $KANON_VAR/trac/$PROJECT_NAME repository resync "*"
 
@@ -253,8 +274,7 @@ echo "
 "
 
 echo "プロジェクト管理 : http://[サーバ名]/trac/"$PROJECT_NAME
-echo "リポジトリ       : http://[サーバ名]/"$REPO_TYPE"/"$PROJECT_NAME
-
-
-
-
+if [ "$REPO_TYPE" != '' ]
+then
+    echo "リポジトリ       : http://[サーバ名]/"$REPO_TYPE"/"$PROJECT_NAME
+fi
