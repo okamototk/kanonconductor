@@ -210,6 +210,8 @@ else
    trac-admin $TRAC_PROJECT_PATH initenv $PROJECT_NAME sqlite:db/trac.db
 fi
 
+cat "$KANON_CONFIG"/trac-template/"$TEMPLATE"/trac-ticketcustom.ini >> \
+    $TRAC_PROJECT_PATH/conf/trac.ini
 
 if [ -d "$KANON_CONFIG/trac-template/$TEMPLATE/trac-wiki" ]
 then
