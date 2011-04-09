@@ -132,7 +132,7 @@ then
             ;;
         rhel5|rhel6)
             wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
-            yum -y --nogpgcheck install jenkins
+            yum -y --nogpgcheck install jenkins java-1.6.0-openjdk-devel
             CHK=`grep prefix "/etc/sysconfig/jenkins"`
             if [ "$CHK" = '' ]
             then
