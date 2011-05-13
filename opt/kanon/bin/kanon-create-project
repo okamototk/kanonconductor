@@ -193,6 +193,7 @@ elif [ "$REPO_TYPE" = 'git' ]
 then
    git init --bare $KANON_VAR/git/$PROJECT_NAME
    git --git-dir=$KANON_VAR/git/$PROJECT_NAME update-server-info  
+   cat $KANON_CONFIG/vcs-template/git/post-receive |sed 's/%{PROJECT_NAME}/'$PROJECT_NAME'/' > $KANON_VAR/git/$PROJECT_NAME/hooks/post-receive
    chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/git/$PROJECT_NAME
 elif [ "$REPO_TYPE" != '' ]
 then
