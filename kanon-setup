@@ -256,6 +256,7 @@ case $OS in
         a2enmod expires
         a2enmod auth_digest
         a2enmod dav_fs
+        a2enmod proxy_http
         a2ensite kanon
         a2ensite vcs
         service apache2 stop
