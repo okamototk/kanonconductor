@@ -99,7 +99,7 @@ case $OS in
         wget $EPEL_RPM_URL
         rpm -Uvh epel-release-5-4.noarch.rpm
         rm -f epel-release-5-4.noarch.rpm
-        yum -y install `cat pkglist.rhel5`
+        yum --enablerepo=epel -y install `cat pkglist.rhel5`
 
         # Add Kanon Repository. For Subversion 1.6 with Python26.
         cp -f resource/kanon.repo /etc/yum.repos.d/kanon.repo
