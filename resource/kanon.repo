@@ -1,5 +1,6 @@
+
 [kanon]
 name = RHEL $releasever - Kanon - chris
 baseurl = http://kanon.ultimania.org/pkg/centos5/$basearch
-enabled = 1
+enabled = 0
 gpgcheck = 0

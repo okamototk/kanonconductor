@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 export KANON_OPT=/opt/kanon
@@ -103,7 +104,7 @@ case $OS in
 
         # Add Kanon Repository. For Subversion 1.6 with Python26.
         cp -f resource/kanon.repo /etc/yum.repos.d/kanon.repo
-        yum -y install subversion-1.6.15 mod_dav_svn-1.6.15
+        yum --enablerepo=kanon -y install subversion-1.6.15 mod_dav_svn-1.6.15
         ;;
     *)
         ;;
