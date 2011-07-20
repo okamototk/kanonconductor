@@ -251,7 +251,7 @@ case $OS in
         cp resource/trac_hook.py /usr/lib/python2.6/dist-packages/bzrlib/plugins
         if [ ! -f /etc/apache2/sites-available/kanon ]
         then
-            cp resource/httpd.conf /etc/apache2/sites-available/kanon
+            sed s/\%APACHE_USER\%/$APACHE_USER/g resource/httpd.conf > /etc/apache2/sites-available/kanon
             cp resource/httpd-vcs.conf /etc/apache2/sites-available/vcs
         fi
         a2enmod expires
@@ -273,7 +273,7 @@ case $OS in
         cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
         if [ ! -f /etc/httpd/conf.d/kanon.conf ]
         then
-            cp resource/httpd.conf /etc/httpd/conf.d/kanon.conf
+            sed s/\%APACHE_USER\%/$APACHE_USER/g resource/httpd.conf > /etc/httpd/conf.d/kanon.conf
             cp resource/httpd-vcs.conf /etc/httpd/conf.d/vcs.conf
         fi
         echo 0 > /selinux/enforce
