@@ -240,7 +240,7 @@ file = "$KANON_CONFIG"/trac-template/"$TEMPLATE"/trac.ini
 "  >> $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
 
 # authz_fileとauthz_module_nameの空設定を削除
-grep -v 'authz_* = ' $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini > /tmp/$PROJECT_NAME_trac.ini
+grep -v 'authz_* = ' $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini | grep -v permission_policies > /tmp/$PROJECT_NAME_trac.ini
 mv /tmp/$PROJECT_NAME_trac.ini $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
 
 # HudsonTracPlugPluginを有効化
