@@ -41,15 +41,16 @@ INSERT INTO report VALUES(18,'trac',"バックログの確認",
         (CASE tt.owner WHEN $USER THEN 'font-weight: bold' END)
     END) AS __style__,
   tt.milestone AS __group__,
-  t.id AS id,
+  t.id AS ticket,
   '' AS 'ストーリー',
-  tt.id AS ticket,
+  '[/ticket/'||tt.id||' #'||tt.id||']' AS description,
   tt.summary AS 'タスク',
   tt.owner AS '担当者', 
   tt.status AS '状態', 
   CASE WHEN st.child IS NULL THEN peh.value ELSE eh.value END AS '見積',
   CASE WHEN st.child IS NULL THEN pth.value ELSE th.value END AS '作業時間',
-  '' AS description
+  '' AS 説明,
+  t.id AS _id
 FROM ticket t 
   LEFT JOIN subtickets st  ON st.parent =t.id AND t.type='ストーリー'
   LEFT JOIN ticket tt ON tt.id=st.child
@@ -66,7 +67,7 @@ SELECT
   4 AS __color__,
   'color: black; font-weight: bold;'  AS __style__,
   t.milestone AS __group__,
-  t.id AS id,
+  t.id AS ticket,
   t.summary AS 'ストーリー',
   '',
   '',
@@ -74,7 +75,8 @@ SELECT
   '',
   '',
   '',
-  '[/newticket?type=タスク&parents='||t.id||'&milestone='||t.milestone||' タスク作成]' AS  description
+  '[/newticket?type=タスク&parents='||t.id||'&milestone='||t.milestone||' タスク作成]' AS  説明,
+  t.id AS _id
 FROM ticket t
 WHERE t.type='ストーリー' AND t.status<>'closed'
 
@@ -88,23 +90,23 @@ SELECT
         (CASE t.owner WHEN $USER THEN 'font-weight: bold' END)
     END) AS __style__,
   t.milestone AS __group__,
-  '-' AS id,
+  '-' AS ticket,
   'その他:' ||t.type AS 'ストーリー',
-  t.id AS ticket,
+  '[/ticket/'||t.id||' #'||t.id||']' AS description,
   t.summary as 'タスク',
   t.owner AS '担当者', 
   t.status AS '状態',
   eh.value AS '見積',
   th.value AS '作業時間',
-  ''
+  '',
+  NULL AS _id
 FROM ticket as t
   LEFT JOIN ticket_custom eh ON eh.ticket = t.id AND eh.name = 'estimatedhours'
   LEFT JOIN ticket_custom th ON th.ticket = t.id AND th.name = 'totalhours'
 WHERE NOT t.type IN ('ストーリー')  AND
   NOT EXISTS (SELECT * from subtickets WHERE subtickets.child = t.id)
 
-
-ORDER BY __group__ DESC, id,ticket DESC","
+ORDER BY __group__ DESC, ticket, description","
  * スプリント毎のストーリー(プロダクトバックログ)とタスク(スプリントバックログ)を確認することができます。
  * 各スプリントのスプリントバックログ(タスク)の一覧を表示します。スプリントバックログはプロダクトバックログ(ストーリー)に紐づいている必要があります。
  * 一番右のタスク作成をクリックすると、ストーリーに対応したタスクを作成することができます。
