@@ -103,6 +103,7 @@ case $OS in
 
         # Add Kanon Repository. For Subversion 1.6 with Python26.
         cp -f resource/kanon.repo /etc/yum.repos.d/kanon.repo
+        yum -y remove subversion-1.4.2
         yum --enablerepo=kanon -y install subversion-1.6.15 mod_dav_svn-1.6.15
         ;;
     *)
@@ -266,7 +267,9 @@ case $OS in
         if [ $OS = 'rhel5' ]
         then
             mkdir -p /var/opt/kanon/trac/.egg-cache
+            mkdir -p /var/www/.python-eggs
             chown $APACHE_USER:$APACHE_USER -R /var/opt/kanon/trac/.egg-cache/
+            chown $APACHE_USER:$APACHE_USER -R /var/www/.python-eggs
         fi
         mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
         cp resource/trac_hook.py /usr/lib/python2.6/site-packages/bzrlib/plugin
