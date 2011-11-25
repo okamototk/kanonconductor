@@ -239,9 +239,54 @@ echo "
 file = "$KANON_CONFIG"/trac-template/"$TEMPLATE"/trac.ini
 "  >> $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
 
-# authz_fileとauthz_module_nameの空設定を削除
-grep -v 'authz_* = ' $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini | grep -v permission_policies > /tmp/$PROJECT_NAME_trac.ini
-mv /tmp/$PROJECT_NAME_trac.ini $KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
+# svnとそれ以外のリポジトリの違いを設定します
+TRAC_PROJECT_INI=$KANON_VAR/trac/$PROJECT_NAME/conf/trac.ini
+TRAC_TMP_INI=/tmp/$PROJECT_NAME_trac.ini
+if [ "$REPO_TYPE" = "svn" ]
+then
+    PERMISSION_POLICIES0=''
+    TEMPLAE_TRAC_INI_FILE_NAME=$TRAC_PROJECT_INI
+    while [ -e "$TEMPLAE_TRAC_INI_FILE_NAME" ] # ファイルの存在確認
+    do
+        # permission_policiesからAuthzSourcePolicyを削除、残りの設定値を取得、
+         # 行末の',' ,' ', CRを削除、先頭にAuthzSourcePolicyを追加し変数に設定します。
+        PERMISSION_POLICIES=`\
+          grep "^permission_policies = " $TEMPLAE_TRAC_INI_FILE_NAME | \
+          sed -e 's/\(AuthzSourcePolicy,* *\)//g' \
+              -e 's/^permission_policies = \(.*\)$/AuthzSourcePolicy, \1/' \
+              -e 's/,* *\r*$//'`
+        if [ -n "$PERMISSION_POLICIES" ] ; then
+            if [ -n "$PERMISSION_POLICIES0" ] ; then
+                break
+            else
+                PERMISSION_POLICIES0=$PERMISSION_POLICIES
+                PERMISSION_POLICIES=''
+            fi
+        fi
+        # inheritしているファイル名を抜き出します
+        TEMPLAE_TRAC_INI_FILE_NAME=`cat $TEMPLAE_TRAC_INI_FILE_NAME | \
+          sed -n -e "/\[inherit\]/,/\[/p" | grep "^file = .*$" | \
+          sed -e 's/^file = \(.*\)\r*$/\1/'`
+    done
+    if [ -z "$PERMISSION_POLICIES" ] ; then
+        if [ -n "$PERMISSION_POLICIES0" ] ; then
+            PERMISSION_POLICIES="$PERMISSION_POLICIES0"
+        else
+            PERMISSION_POLICIES='AuthzSourcePolicy'
+        fi
+    fi
+    # authz_fileを削除、authz_module_nameにプロジェクト名を設定、
+    # permission_policiesを削除し、継承しているファイル等から作成した値を設定
+    grep -v 'authz_file = ' $TRAC_PROJECT_INI | \
+      grep -v 'permission_policies = ' | \
+      sed -e "s/^\(authz_module_name = \)/\1$PROJECT_NAME/" \
+          -e "/^\[trac\]$/apermission_policies = $PERMISSION_POLICIES" > \
+      $TRAC_TMP_INI
+else
+    # SVN以外は, authz_file, authz_module_nameを削除
+    grep -v 'authz_.* = ' $TRAC_PROJECT_INI > $TRAC_TMP_INI
+fi
+mv $TRAC_TMP_INI $TRAC_PROJECT_INI
 
 # HudsonTracPlugPluginを有効化
 if [ "$JENKINS" = 'y' ]
