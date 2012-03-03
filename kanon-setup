@@ -158,7 +158,7 @@ fi
 ### install apache maven
 if [ "$MAVEN" = 'y' ]
 then
-    wget -O /tmp/maven.tgz http://ftp.riken.jp/net/apache//maven/binaries/apache-maven-3.0.3-bin.tar.gz
+    wget -O /tmp/maven.tgz http://ftp.riken.jp/net/apache//maven/binaries/apache-maven-3.0.4-bin.tar.gz
     pushd .
     cd /tmp
     tar zxf maven.tgz
