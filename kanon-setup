@@ -95,7 +95,7 @@ case $OS in
         ;;
     rhel5)
         # Add EPEL Repository. For python26, python26-devel, python26-mod_wsgi.
-        EPEL_RPM_URL="http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
+        EPEL_RPM_URL='https://dl.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm'
         wget $EPEL_RPM_URL
         rpm -Uvh epel-release-5-4.noarch.rpm
         rm -f epel-release-5-4.noarch.rpm
