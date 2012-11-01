@@ -18,7 +18,7 @@ then
         echo "RHEL 5.x / CentOS 5.x / OEL 5.xが検出されました。"
     else
         OS='rhel6'
-        echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"        
+        echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
     fi
 else
     echo "サポートされていないOSです。"
@@ -40,7 +40,7 @@ then
 fi
 
 
-if [ -d /opt/kanon ]
+if [ -d "$KANON_OPT" ]
 then
     echo "=========================================================================="
     echo "注意！！ このマシンには既にKanonがインストールされているかも。確認してね♪"
@@ -84,11 +84,11 @@ then
 fi
 
 
-### install ubuntu package 
+### install ubuntu package
 case $OS in
     debian)
-        apt-get update 
-        apt-get -y install `cat pkglist.debian` 
+        apt-get update
+        apt-get -y install `cat pkglist.debian`
         ;;
     rhel6)
         yum -y install `cat pkglist.rhel6`
@@ -146,12 +146,12 @@ then
             ;;
     esac
 
-    if [ ! -f /var/jenkins/kanon.install ]    
+    if [ ! -f /var/jenkins/kanon.install ]
     then
         cp -fr resource/jenkins-config/* /var/lib/jenkins/
         chown $JENKINS_OWN -R /var/lib/jenkins
     fi
-    
+
     service jenkins restart
 fi
 
@@ -166,11 +166,11 @@ then
     then
         mkdir /opt/maven
     fi
-    
+
     cp -fr apache-maven-3.?.?/* /opt/maven/
     rm -fr apache-maven-3.?.?
 
-    popd 
+    popd
 fi
 
 ### install files
@@ -185,63 +185,79 @@ fi
 
 
 ### setup configuration
-python2.6 resource/virtualenv.py /opt/kanon
-source /opt/kanon/bin/activate
+python2.6 resource/virtualenv.py --distribute "$KANON_OPT"
+source "$KANON_OPT/bin/activate"
 
 ## setup sitecustomize for python
 if [ -f /etc/python2.6/sitecustomize.py ]
 then
     CHK=`grep "setdefaultencoding" /etc/python2.6/sitecustomize.py`
     if [ "$CHK" = '' ]
-    then 
+    then
         cat opt/kanon/lib/python2.6/site-packages/sitecustomize.py >> /etc/python2.6/sitecustomize.py
     fi
 fi
 
 
+check_pydist() {
+    "$KANON_OPT/bin/python" -c '\
+import sys
+from pkg_resources import get_distribution
+get_distribution(sys.argv[1])' "$1" 2>/dev/null
+}
+
+
+try_easy_install() {
+    if check_pydist "$1"; then
+        echo "インストール済み: $1" 1>&2
+    else
+        "$KANON_OPT/bin/easy_install" -Z "${2:-$1}"
+        if ! check_pydist "$1"; then
+            echo "*** STOP *** インストールに失敗しました: '${2:-$1}'"
+            exit 1
+        fi
+    fi
+}
+
+
 if [ "$OS" = "rhel5" ]
 then
     # Install Extra Package for CentOS 5.X
-    easy_install "mercurial==1.7.3"
-    easy_install bzr
-    easy_install pygments
+    try_easy_install 'mercurial==1.7.3'
+    try_easy_install bzr
+    try_easy_install pygments
 fi
 
-easy_install http://svn.edgewall.org/repos/genshi/tags/0.6.0/
-easy_install http://ftp.edgewall.com/pub/babel/Babel-0.9.5.zip
-easy_install http://www.i-act.co.jp/project/products/downloads/Trac-0.12.2.ja1.zip
-easy_install xlrd
-easy_install https://github.com/hvr/trac-git-plugin/zipball/v0.12.0.5
-bzr co lp:trac-bzr /tmp/trac-bzr-install
-easy_install /tmp/trac-bzr-install
-rm -fr /tmp/trac-bzr-install
-
-
-### install trac plugins
-easy_install http://svn.edgewall.com/repos/trac/plugins/0.12/mercurial-plugin
+try_easy_install 'Genshi>=0.6'
+try_easy_install 'Babel>=0.9.5'
+try_easy_install 'Trac' http://www.i-act.co.jp/project/products/downloads/Trac-0.12.4.ja1.zip
+try_easy_install 'xlrd'
+try_easy_install 'TracGit' https://github.com/hvr/trac-git-plugin/zipball/v0.12.0.5
+try_easy_install 'TracBzr'
+try_easy_install 'TracMercurial' http://svn.edgewall.org/repos/trac/plugins/0.12/mercurial-plugin
 
 #resource/pluginsディレクトリのプラグインをインストール
 pushd .
 
-cd resource/trac-plugins
-for i in `ls -1 .`
-do
-    cd $i;python setup.py install
-    cd ..
+for i in `ls -1 resource/trac-plugins`; do
+    rm -rf "resource/trac-plugins/$i/build" "resource/trac-plugins/$i/dist"
+    if ! "$KANON_OPT/bin/easy_install" -Z --no-deps "resource/trac-plugins/$i"; then
+        echo "*** STOP *** インストールに失敗しました: resource/trac-plugins/$i"
+        exit 1
+    fi
 done
-cd ../..
 
 # install plugins from web site
-rm -fr /tmp/kanon_build
-for i in `cat pluginlist`
-do
-    cd /tmp
-    svn co $i kanon_build
-    cd kanon_build
-    python setup.py install
-    cd ..
-    rm -fr kanon_build
+for i in `cat pluginlist`; do
+    workdir=`mktemp -d /tmp/kanon_build.XXXXXXXX` || exit 1
+    svn co -q $i $workdir
+    if ! "$KANON_OPT/bin/easy_install" -Z $workdir; then
+        echo "*** STOP *** インストールに失敗しました: $i"
+        exit 1
+    fi
+    rm -fr "$workdir"
 done
+
 popd
 
 
@@ -266,9 +282,9 @@ case $OS in
     rhel5|rhel6)
         if [ $OS = 'rhel5' ]
         then
-            mkdir -p /var/opt/kanon/trac/.egg-cache
+            mkdir -p "$KANON_VAR/trac/.egg-cache"
             mkdir -p /var/www/.python-eggs
-            chown $APACHE_USER:$APACHE_USER -R /var/opt/kanon/trac/.egg-cache/
+            chown $APACHE_USER:$APACHE_USER -R "$KANON_VAR/trac/.egg-cache/"
             chown $APACHE_USER:$APACHE_USER -R /var/www/.python-eggs
         fi
         mkdir -p /usr/lib/python2.6/site-packages/bzrlib/plugin
@@ -279,11 +295,11 @@ case $OS in
             cp resource/httpd-vcs.conf /etc/httpd/conf.d/vcs.conf
         fi
         echo 0 > /selinux/enforce
-        CHK=`grep SELINUX=enforcing /etc/selinux/config` 
-        if [ ! "$CHK" = '' ]   
+        CHK=`grep SELINUX=enforcing /etc/selinux/config`
+        if [ ! "$CHK" = '' ]
         then
             cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
-            mv /tmp/selinux_config /etc/selinux/config 
+            mv /tmp/selinux_config /etc/selinux/config
         fi
         echo "SELinuxが無効化されました"
         service httpd stop
@@ -323,12 +339,12 @@ fi
 # setup SampleProject
 if [ ! -d "$KANON_VAR/trac/SampleProject" ]
 then
-    /opt/kanon/bin/kanon-create-project SampleProject svn default y
-    svn import SampleProject file:///var/opt/kanon/svn/SampleProject/ -m "initial import."
-    chown $APACHE_USER.$APACHE_USER -R /var/opt/kanon/svn/SampleProject
+    "$KANON_OPT/bin/kanon-create-project" SampleProject svn default y
+    svn import SampleProject file://$KANON_VAR/svn/SampleProject/ -m "initial import."
+    chown $APACHE_USER.$APACHE_USER -R $KANON_VAR/svn/SampleProject
 fi
 
 chown $APACHE_USER.$APACHE_USER -R /etc/opt/kanon
-    
+
 echo "Kanon Team Conductorのインストールが完了しました。"
-echo $KANON_OPT"/bin/kanon-create-project コマンドでプロジェクトを作成してください。"
+echo "$KANON_OPT/bin/kanon-create-project コマンドでプロジェクトを作成してください。"
