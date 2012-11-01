@@ -175,10 +175,9 @@ fi
 
 ### install files
 cp -fr opt/* /opt
-if [ "$OS" = "rhel5" ]
-then
-    # FIXME CentOS 5.x では n オプションがないため 強制上書きになってしまう.
-    cp -fr etc/* /etc
+if [ "$OS" = "rhel5" ]; then
+    # Unsupported -n option on RHEL5
+    (cd etc && find . -type f | tar cf - -T - --owner=root --group=root) | tar xf - -C /etc -k 2>/dev/null
 else
     cp -frn etc/* /etc
 fi
