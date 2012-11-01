@@ -311,30 +311,9 @@ esac
 
 
 # データディレクトリが存在しない場合作成
-if [ ! -d "$KANON_VAR/trac" ]
-then
-    mkdir -p "$KANON_VAR/trac"
-fi
-
-if [ ! -d "$KANON_VAR/hg" ]
-then
-    mkdir -p "$KANON_VAR/hg"
-fi
-
-if [ ! -d "$KANON_VAR/bzr" ]
-then
-    mkdir -p "$KANON_VAR/bzr"
-fi
-
-if [ ! -d "$KANON_VAR/svn" ]
-then
-    mkdir -p "$KANON_VAR/svn"
-fi
-
-if [ ! -d "$KANON_VAR/git" ]
-then
-    mkdir -p "$KANON_VAR/git"
-fi
+for i in trac hg bzr svn git; do
+    [ -d "$KANON_VAR/$i" ] || mkdir -p "$KANON_VAR/$i"
+done
 
 # setup SampleProject
 if [ ! -d "$KANON_VAR/trac/SampleProject" ]
