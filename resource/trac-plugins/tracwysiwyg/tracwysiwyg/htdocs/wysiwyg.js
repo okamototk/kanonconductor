@@ -237,21 +237,20 @@ TracWysiwyg.prototype.setupFormEvent = function() {
 TracWysiwyg.prototype.createEditable = function(d, textarea, textareaResizable) {
     var self = this;
     var getStyle = TracWysiwyg.getStyle;
-    var width = TracWysiwyg.getSelfOrAncestor(textarea, "table") ? textarea.offsetWidth : "100%";
-    var height = textarea.offsetHeight;
-    if (!width || !height) {
+    var dimension = getDimension(textarea);
+    if (!dimension.width || !dimension.height) {
         setTimeout(lazy, 100);
     }
-    if (!width) {
-        width = parseInt(getStyle(textarea, "fontSize"), 10) * (textarea.cols || 10) * 0.5;
+    if (!dimension.width) {
+        dimension.width = parseInt(getStyle(textarea, "fontSize"), 10) * (textarea.cols || 10) * 0.5;
     }
-    if (!height) {
-        height = parseInt(getStyle(textarea, "lineHeight"), 10) * (textarea.rows || 3);
+    if (!dimension.height) {
+        dimension.height = parseInt(getStyle(textarea, "lineHeight"), 10) * (textarea.rows || 3);
     }
     var wrapper = d.createElement("div");
     wrapper.innerHTML = '<iframe class="wysiwyg" '
         + 'src="javascript:\'\'" '
-        + 'width="' + width + '" height="' + height + '" '
+        + 'width="' + dimension.width + '" height="' + dimension.height + '" '
         + 'frameborder="0" marginwidth="0" marginheight="0">'
         + '</iframe>';
     var frame = this.frame = wrapper.firstChild;
@@ -262,8 +261,8 @@ TracWysiwyg.prototype.createEditable = function(d, textarea, textareaResizable) 
         var contentDocument = null;
         var grip = d.createElement("div");
         grip.className = "trac-grip";
-        if (width != "100%" && !textarea.addEventListener) {
-            grip.style.width = width + "px";
+        if (/^[0-9]+$/.exec(dimension.width)) {
+            grip.style.width = dimension.width + "px";
         }
         addEvent(grip, "mousedown", beginDrag);
         wrapper.appendChild(grip);
@@ -310,14 +309,26 @@ TracWysiwyg.prototype.createEditable = function(d, textarea, textareaResizable) 
         TracWysiwyg.removeEvent(contentDocument, "mouseup", endDrag);
     }
 
-    function lazy() {
+    function getDimension(textarea) {
         var width = textarea.offsetWidth;
-        var height = textarea.offsetHeight;
-        if (width && height) {
-            self.frame.width = width;
-            self.frame.height = height;
-            if (!textarea.addEventListener && textareaResizable) {
-                grip.style.width = width + "px";
+        if (width) {
+            var parentWidth = textarea.parentNode.offsetWidth
+                            + parseInt(getStyle(textarea, 'borderLeftWidth'), 10)
+                            + parseInt(getStyle(textarea, 'borderRightWidth'), 10);
+            if (width == parentWidth) {
+                width = "100%";
+            }
+        }
+        return { width: width, height: textarea.offsetHeight };
+    }
+
+    function lazy() {
+        var dimension = getDimension(textarea);
+        if (dimension.width && dimension.height) {
+            self.frame.width = dimension.width;
+            self.frame.height = dimension.height;
+            if (textareaResizable) {
+                grip.style.width = /^[0-9]+$/.exec(dimension.width) ? dimension.width + "px" : dimension.width;
             }
             return;
         }
@@ -880,7 +891,7 @@ TracWysiwyg.prototype.detectTracLink = function(event) {
     var label = match[0];
     var link = this.normalizeTracLink(label);
     var id = this.generateDomId();
-    var anchor = this.createAnchor(link, label, { id: id, "tracwysiwyg-autolink": true });
+    var anchor = this.createAnchor(link, label, { id: id, "data-tracwysiwyg-autolink": "true" });
     var anonymous = this.contentDocument.createElement("div");
     anonymous.appendChild(anchor);
     var html = anonymous.innerHTML;
@@ -1224,7 +1235,13 @@ TracWysiwyg.prototype.createLink = function() {
     var expand = anchor || TracWysiwyg.getSelfOrAncestor(focus, "tt");
     var currLink;
     if (anchor) {
-        if (anchor.getAttribute("tracwysiwyg-autolink") == "tracwysiwyg-autolink") {
+        var attrs;
+        var autolink = anchor.getAttribute("data-tracwysiwyg-autolink");
+        if (autolink === null) {
+            attrs = TracWysiwyg.unserializeFromHref(anchor.href);
+            autolink = attrs["data-tracwysiwyg-autolink"];
+        }
+        if (autolink == "true") {
             var pattern = this.wikiDetectTracLinkPattern;
             pattern.lastIndex = 0;
             var label = TracWysiwyg.getTextContent(anchor);
@@ -1234,7 +1251,8 @@ TracWysiwyg.prototype.createLink = function() {
             }
         }
         if (!currLink) {
-            currLink = anchor.getAttribute("tracwysiwyg-link") || anchor.href;
+            currLink = anchor.getAttribute("data-tracwysiwyg-link") || attrs["data-tracwysiwyg-link"]
+                || anchor.href;
         }
     }
     else {
@@ -1265,18 +1283,16 @@ TracWysiwyg.prototype.createLink = function() {
 TracWysiwyg.prototype.createAnchor = function(link, label, attrs) {
     var d = this.contentDocument;
     var anchor = d.createElement("a");
+    var href = {};
     for (var name in attrs) {
         var value = attrs[name];
-        switch (typeof value) {
-        case "boolean":
-            value = name;
-            break;
-        }
+        href[name] = value;
         anchor.setAttribute(name, value);
     }
-    anchor.href = TracWysiwyg.quickSearchURL(link);
+    href["data-tracwysiwyg-link"] = link;
+    anchor.href = TracWysiwyg.serializeToHref(href);
     anchor.title = link;
-    anchor.setAttribute("tracwysiwyg-link", link);
+    anchor.setAttribute("data-tracwysiwyg-link", link);
     anchor.setAttribute("onclick", "return false;");
     anchor.appendChild(d.createTextNode(label));
     return anchor;
@@ -1472,10 +1488,10 @@ TracWysiwyg.prototype.normalizeTracLink = function(link) {
         link = "wiki:" + link;
     }
     if (/^wiki:[^\"\']/.test(link) && /\s/.test(link)) {
-        if (link.indexOf('"') < 0) {
+        if (link.indexOf('"') === -1) {
             link = 'wiki:"' + link + '"';
         }
-        else if (link.indexOf("'") < 0) {
+        else if (link.indexOf("'") === -1) {
             link = "wiki:'" + link + "'";
         }
         else {
@@ -1556,7 +1572,6 @@ TracWysiwyg.prototype.wikitextToFragment = function(wikitext, contentDocument, o
     var escapeNewlines = !!options.escapeNewlines;
 
     var getSelfOrAncestor = TracWysiwyg.getSelfOrAncestor;
-    var quickSearchURL = TracWysiwyg.quickSearchURL;
     var _linkScheme = this._linkScheme;
     var _quotedString = this._quotedString;
     var wikiInlineRulesCount = this.wikiInlineRules.length;
@@ -2055,6 +2070,7 @@ TracWysiwyg.prototype.wikitextToFragment = function(wikitext, contentDocument, o
         }
         row.appendChild(cell);
         holder = cell;
+        decorationStatus = {};
     }
 
     function closeTable() {
@@ -2496,7 +2512,7 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
         case "sup":
             return wikiOpenTokens["sup"];
         }
-        return null;
+        return undefined;
     }
 
     function nodeDecorations(node) {
@@ -2585,7 +2601,7 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
         }
     }
 
-    function pushOpenToken(token) {
+    function pushToken(token) {
         var _texts = texts;
         var _decorationTokenPattern = decorationTokenPattern;
         var length = _texts.length;
@@ -2629,14 +2645,22 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
     }
 
     function pushAnchor(node, bracket) {
-        var link = (node.getAttribute("tracwysiwyg-link") || node.href).replace(/^\s+|\s+$/g, "");
+        var link = node.getAttribute("data-tracwysiwyg-link");
+        var autolink = node.getAttribute("data-tracwysiwyg-autolink");
+        var attrs;
+        if (link === null) {
+            attrs = TracWysiwyg.unserializeFromHref(node.href);
+            link = attrs["data-tracwysiwyg-link"];
+            autolink = attrs["data-tracwysiwyg-autolink"];
+        }
+        link = (link || node.href).replace(/^\s+|\s+$/g, "");
         var label = getTextContent(node).replace(/^\s+|\s+$/g, "");
         if (!label) {
             return;
         }
         var text = null;
         var traclink = null;
-        if (node.getAttribute("tracwysiwyg-autolink") == "tracwysiwyg-autolink") {
+        if (autolink == "true") {
             if (wikiPageNamePattern.test(label)) {
                 text = label;
                 link = "wiki:" + label;
@@ -2717,12 +2741,12 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
     }
 
     function open(name, node) {
-        if (skipNode) {
+        if (skipNode !== null) {
             return;
         }
         var _texts = texts;
         var token = wikiOpenTokens[name];
-        if (token) {
+        if (token !== undefined) {
             if (name in wikiBlockTags && self.isInlineNode(node.previousSibling)) {
                 _texts.push("\n");
             }
@@ -2730,7 +2754,7 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
                 if (name in wikiInlineTags && isTailEscape()) {
                     _texts.push(" ");
                 }
-                pushOpenToken(token);
+                pushToken(token);
             }
             openBracket = false;
         }
@@ -2954,11 +2978,11 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
                 }
                 else {
                     var token = tokenFromSpan(node);
-                    if (token) {
+                    if (token !== undefined) {
                         if (name in wikiInlineTags && isTailEscape()) {
                             _texts.push(" ");
                         }
-                        pushOpenToken(token);
+                        pushToken(token);
                     }
                 }
                 break;
@@ -2974,7 +2998,7 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
     }
 
     function close(name, node) {
-        if (skipNode) {
+        if (skipNode !== null) {
             if (skipNode == node) {
                 skipNode = null;
             }
@@ -2985,11 +3009,11 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
         if (token === true) {
             // nothing to do
         }
-        else if (token) {
+        else if (token !== undefined) {
             if (name in wikiInlineTags && isTailEscape()) {
                 _texts.push(" ");
             }
-            _texts.push(token);
+            pushToken(token);
         }
         else {
             switch (name) {
@@ -3042,7 +3066,7 @@ TracWysiwyg.prototype.domToWikitext = function(root, options) {
                 break;
             case "span":
                 var token = tokenFromSpan(node);
-                if (token) {
+                if (token !== undefined) {
                     if (name in wikiInlineTags && isTailEscape()) {
                         _texts.push(" ");
                     }
@@ -3368,10 +3392,8 @@ else if (document.selection) {
         return row.insertCell(index);
     };
     TracWysiwyg.prototype.getFocusNode = function() {
+        this.contentWindow.focus();
         var d = this.contentDocument;
-        if (!d.activeElement) {
-            this.contentWindow.focus();
-        }
         var range = d.selection.createRange();
         var node = range.item ? range.item(0) : range.parentElement();
         return node.ownerDocument == d ? node : null;
@@ -3561,6 +3583,7 @@ else if (document.selection) {
         return pseudo;
     };
     TracWysiwyg.prototype.getNativeSelectionRange = function() {
+        this.contentWindow.focus();
         return this.contentDocument.selection.createRange();
     };
     TracWysiwyg.prototype.getSelectionText = function() {
@@ -3586,10 +3609,8 @@ else if (document.selection) {
         return fragment;
     };
     TracWysiwyg.prototype.getSelectionPosition = function() {
+        this.contentWindow.focus();
         var d = this.contentDocument;
-        if (!d.activeElement) {
-            this.contentWindow.focus();
-        }
         var range = d.selection.createRange();
         var startNode = null;
         var endNode = null;
@@ -3612,6 +3633,7 @@ else if (document.selection) {
         return { start: startNode, end: endNode };
     };
     TracWysiwyg.prototype.expandSelectionToElement = function(arg) {
+        this.contentWindow.focus();
         var d = this.contentDocument;
         var body = d.body;
         var range = d.selection.createRange();
@@ -3631,10 +3653,8 @@ else if (document.selection) {
         }
     };
     TracWysiwyg.prototype.selectionContainsTagName = function(name) {
+        this.contentWindow.focus();
         var d = this.contentDocument;
-        if (!d.activeElement) {
-            this.contentWindow.focus();
-        }
         var selection = d.selection;
         var range = selection.createRange();
         var parent = range.item ? range.item(0) : range.parentElement();
@@ -3658,13 +3678,13 @@ else if (document.selection) {
         return false;
     };
     TracWysiwyg.prototype.insertHTML = function(html) {
-        var range = this.contentDocument.selection.createRange();
-        if (/^\s+$/.exec(html)) {
-            range.text = html;
-        }
-        else {
-            range.pasteHTML(html.replace(/\t/g, "&#9;"));
-        }
+        this.contentWindow.focus();
+        var selection = this.contentDocument.selection;
+        var range = selection.createRange();
+        range.pasteHTML(html.replace(/\t/g, "&#9;"));
+        range.collapse(false);
+        range.select();
+        range = this.contentDocument.selection.createRange();
     };
 }
 else {
@@ -3773,17 +3793,9 @@ TracWysiwyg.getTracPaths = function() {
         case "tracwysiwyg.stylesheet":
             stylesheets.push(href);
             break;
-        case "search":
-            if (type) {
-                paths.search = href;
-            }
-            break;
         }
     }
     if (paths.base && stylesheets.length > 0) {
-        if (!paths.search) {
-            paths.search = paths.base.replace(/\/?$/, "/search");
-        }
         return paths;
     }
     return null;
@@ -3942,11 +3954,27 @@ TracWysiwyg.getSelfOrAncestor = function(element, name) {
     return null;
 };
 
-TracWysiwyg.quickSearchURL = function(link) {
-    if (!/^(?:(?:https?|ftp|mailto|file):|[\/.#])/.test(link)) {
-        link = TracWysiwyg.tracPaths.search + "?q=" + encodeURIComponent(link);
+TracWysiwyg.serializeToHref = function(attrs) {
+    var texts = [];
+    for (var name in attrs) {
+        if (/^data(?:-|$)/.exec(name)) {
+            texts.push(encodeURIComponent(name) + "=" + encodeURIComponent(attrs[name]));
+        }
     }
-    return link;
+    return "#" + texts.join("&");
+};
+
+TracWysiwyg.unserializeFromHref = function(href, name) {
+    var attrs = {};
+    if (href.indexOf("#") !== -1) {
+        var pieces = href.replace(/^[^#]*#/, '').split(/&/g);
+        var length = pieces.length;
+        for (var i = 0; i < length; i++) {
+            var pair = pieces[i].split(/=/g, 2);
+            attrs[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+    }
+    return name ? attrs[name] : attrs;
 };
 
 TracWysiwyg.getTextContent = (function() {
