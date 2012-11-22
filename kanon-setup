@@ -3,24 +3,43 @@
 export KANON_OPT=/opt/kanon
 export KANON_VAR=/var/opt/kanon
 
-if [ -f /etc/debian_version ]
-then
-    OS='debian'
-    APACHE_USER=www-data
-    echo "Debian / Ubuntu が検出されました。"
-elif [ -f /etc/redhat-release ]
-then
-    APACHE_USER=apache
-    CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
-    if [ "$CHK" != '' ]
-    then
-        OS='rhel5'
-        echo "RHEL 5.x / CentOS 5.x / OEL 5.xが検出されました。"
-    else
-        OS='rhel6'
-        echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
+probe_debian() {
+    if [ -f /etc/debian_version ]; then
+        OS='debian'
+        APACHE_USER=www-data
+        echo "Debian / Ubuntu が検出されました。"
+        return 0
     fi
-else
+    return 1
+}
+probe_redhat() {
+    if [ -f /etc/redhat-release ]; then
+        APACHE_USER=apache
+        CHK=`egrep "CentOS release 5|Red Hat Enterprise Linux .* 5" /etc/redhat-release`
+        if [ "$CHK" != '' ]; then
+            OS='rhel5'
+            echo "RHEL 5.x / CentOS 5.x / OEL 5.xが検出されました。"
+        else
+            OS='rhel6'
+            echo "RHEL 6.x / CentOS 6.x / OEL 6.xが検出されました。"
+        fi
+        return 0
+    fi
+    return 1
+}
+probe_amazon_linux() {
+    if grep -q '^Amazon Linux AMI' /etc/system-release >/dev/null 2>&1; then
+        OS='amzn'
+        APACHE_USER=apache
+        echo "Amazon Linux AMIが検出されました。"
+        return 0
+    fi
+    return 1
+}
+
+OS=
+probe_debian || probe_redhat || probe_amazon_linux || :
+if [ -z "$OS" ]; then
     echo "サポートされていないOSです。"
     echo "現在サポートされいているOSは、"
     echo ""
@@ -28,15 +47,16 @@ else
     echo "  * Debian GNU/Linux, GNU/kFreeBSD 6.0"
     echo "  * RedHat Enterprise Linux 6.0"
     echo "  * Oracle Enterprise Linux 6.0"
+    echo "  * Amazon Linux AMI"
     echo "  * CentOS 5.x (Experimental)"
     echo ""
     echo "です。"
     exit
 fi
 
-if [ "$USER" != 'root' ]
-then
+if [ "`id -u`" != 0 ]; then
     echo "rootでコマンドを実行してください。"
+    exit 1
 fi
 
 
@@ -90,6 +110,9 @@ case $OS in
         apt-get update
         apt-get -y install `cat pkglist.debian`
         ;;
+    amzn)
+        yum -y install `cat pkglist.rhel6` subversion-python
+        ;;
     rhel6)
         yum -y install `cat pkglist.rhel6`
         ;;
@@ -131,7 +154,7 @@ then
             fi
             JENKINS_OWN=jenkins.nogroup
             ;;
-        rhel5|rhel6)
+        rhel5|rhel6|amzn)
             wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
             yum -y --nogpgcheck install jenkins java-1.6.0-openjdk-devel
             CHK=`grep prefix "/etc/sysconfig/jenkins"`
@@ -278,7 +301,7 @@ case $OS in
         service apache2 stop
         service apache2 start
         ;;
-    rhel5|rhel6)
+    rhel5|rhel6|amzn)
         if [ $OS = 'rhel5' ]
         then
             mkdir -p "$KANON_VAR/trac/.egg-cache"
@@ -293,14 +316,16 @@ case $OS in
             sed s/\%APACHE_USER\%/$APACHE_USER/g resource/httpd.conf > /etc/httpd/conf.d/kanon.conf
             cp resource/httpd-vcs.conf /etc/httpd/conf.d/vcs.conf
         fi
-        echo 0 > /selinux/enforce
-        CHK=`grep SELINUX=enforcing /etc/selinux/config`
-        if [ ! "$CHK" = '' ]
-        then
-            cat /etc/selinux/config |sed 's/SELINUX=enforcing/SELINUX=disabled/' > /tmp/selinux_config
-            mv /tmp/selinux_config /etc/selinux/config
+        if [ -f /etc/selinux/config ]; then
+            echo 0 > /selinux/enforce
+            CHK=`grep SELINUX=enforcing /etc/selinux/config`
+            if [ ! "$CHK" = '' ]; then
+                sed 's/SELINUX=enforcing/SELINUX=disabled/' </etc/selinux/config >/tmp/selinux_config
+                cat /tmp/selinux_config >/etc/selinux/config
+                rm /tmp/selinux_config
+            fi
+            echo "SELinuxが無効化されました"
         fi
-        echo "SELinuxが無効化されました"
         service httpd stop
         service httpd start
         ;;
